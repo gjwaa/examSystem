@@ -13,7 +13,7 @@
 <body>
 
 <h1>这里是首页</h1>
-<h2>${sessionScope.get("userLoginInfo")}</h2>
+<h2>${sessionScope.get("adminLoginInfo")}</h2>
 
 <form action="${pageContext.request.contextPath}/file/upLoad" enctype="multipart/form-data" method="post">
 
@@ -24,7 +24,7 @@
 </form>
 
 
-<a href="${pageContext.request.contextPath}/user/loginOut">注销</a>
+<a href="${pageContext.request.contextPath}/admin/loginOut">注销</a>
 
 
 </body>

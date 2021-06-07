@@ -27,12 +27,18 @@
     <!-- 4.扫描web相关的bean -->
     <context:component-scan base-package="com.gjw.controller"/>
 
-    <!-- 拦截器配置   -->
+<!--     拦截器配置   -->
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/user/**"/>
             <bean class="com.gjw.config.LoginInterceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>
+
+
+
+
+
+
 
 </beans>

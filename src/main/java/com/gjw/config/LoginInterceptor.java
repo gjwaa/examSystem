@@ -11,22 +11,28 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
 
-        if (request.getRequestURI().contains("login")){
-            System.err.println(request.getRequestURI());
+        if (request.getRequestURI().contains("login")) {
+//            System.err.println(request.getRequestURI());
             return true;
         }
 
-        if (request.getSession().getAttribute("userLoginInfo")!=null){
-            System.out.println(request.getRequestURI());
+        if (request.getSession().getAttribute("userLoginInfo") != null) {
+//            System.out.println(request.getRequestURI());
             return true;
         }
 
-        if (request.getRequestURI().equals("loginOut")){
-            System.err.println(request.getRequestURI()+"-->out");
+        if (request.getRequestURI().contains("loginOut")) {
+//            System.err.println(request.getRequestURI() + "-->out");
             return true;
         }
 
-        request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request,response);
+        if (request.getRequestURI().contains("verify")) {
+            return true;
+        }
+
+        request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
         return false;
+
+
     }
 }
