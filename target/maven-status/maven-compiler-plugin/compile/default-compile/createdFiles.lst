@@ -1,7 +1,0 @@
-com\gjw\controller\LoginController.class
-com\gjw\config\LoginInterceptor.class
-com\gjw\bean\User.class
-com\gjw\mapper\UserMapper.class
-com\gjw\service\UserService.class
-com\gjw\service\impl\UserServiceImpl.class
-com\gjw\utils\DrawVerify.class

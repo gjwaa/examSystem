@@ -1,12 +1,16 @@
 package com.gjw.controller;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.gjw.utils.DrawVerify;
+import com.gjw.utils.UnZipAnRar;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -14,8 +18,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin")
@@ -102,6 +109,47 @@ public class LoginController {
         }else {
             out.print("verifyUnPass");
         }
+    }
+
+    @RequestMapping("/help")
+    public String help() {
+       return "help";
+    }
+
+    @RequestMapping("/newPaper")
+    public String newPaper() {
+        return "examManage";
+    }
+
+    @ResponseBody
+    @RequestMapping("/upLoad")
+    public String upLoad(@RequestParam("file") CommonsMultipartFile file, HttpServletRequest request, Model model) throws IOException {
+        String path = request.getServletContext().getRealPath("/upload");
+        File realPath = new File(path);
+        if (!realPath.exists()) {
+            realPath.mkdir();
+        }
+        System.out.println("文件保存地址：" + realPath);
+        File dest = new File(realPath + "/" + file.getOriginalFilename());
+        file.transferTo(dest);
+        System.out.println("fileName===>"+dest.getName());
+        HttpSession session = request.getSession();
+        session.setAttribute("fileLoadUrl", dest.getAbsolutePath());
+        session.setAttribute("fileRootUrl", realPath);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("msg", "ok");
+
+
+        File zipFile = new File(dest.getAbsolutePath());
+        try {
+            UnZipAnRar.unZip(zipFile, realPath.getAbsolutePath()+"\\");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        return jsonObject.toString();
+
     }
 
 

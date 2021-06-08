@@ -27,7 +27,7 @@
     <!-- 4.扫描web相关的bean -->
     <context:component-scan base-package="com.gjw.controller"/>
 
-<!--     拦截器配置   -->
+    <!--拦截器配置-->
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/user/**"/>
@@ -35,10 +35,12 @@
         </mvc:interceptor>
     </mvc:interceptors>
 
-
-
-
-
+    <!--文件上传-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 设置上传文件的最大尺寸为5MB -->
+        <property name="maxUploadSize" value="10485760"/>
+        <property name="maxInMemorySize" value="40960"/>
+    </bean>
 
 
 </beans>
