@@ -18,7 +18,7 @@
                 ,upload = layui.upload
                 ,element = layui.element
                 ,layer = layui.layer;
-
+            var inputValue;
             //选完文件后不自动上传
             upload.render({
                 elem: '#choseFile'
@@ -26,10 +26,46 @@
                 ,auto: false
                 //,multiple: true
                 ,accept: 'file' //普通文件
-                ,exts: 'zip|rar|7z'
+                ,exts: 'zip'
+                ,size:'10240'
                 ,bindAction: '#doUpload'
+                ,choose:function (obj){
+                    layer.prompt({
+                        formType: 0,
+                        value: '',
+                        title: '请输入压缩包解压密码',
+                        btn: ['确定','取消'], //按钮，
+                        btnAlign: 'c'
+                    }, function(value,index){
+                        layer.close(index);
+                        inputValue = value;
+                        console.log(value)
+                        var files = obj.pushFile();
+                        for (let x in files) {
+                            delete files[x];
+                        }
+                        var files = obj.pushFile();
+                        obj.preview(function (index, file, result) {
+                            console.log(files[index].name);
+                            layer.msg("加载成功，请点击上传");
+                        });
+                    });
+
+
+                }
+                ,before: function(obj){
+                    layer.load(); //上传loading
+                    this.data={'zipPwd':inputValue};
+                }
                 ,done: function(res){
                     layer.msg('上传成功');
+                    layer.closeAll('loading');
+                    console.log(res)
+
+                }
+                ,error: function(res){
+                    layer.msg('解压密码有误');
+                    layer.closeAll('loading');
                     console.log(res)
                 }
             });
@@ -51,7 +87,7 @@
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
                     <legend>试卷导入</legend>
                 </fieldset>
-                <form class="layui-form layui-form-pane" action="${pageContext.request.contextPath}/admin/upLoad"
+                <form class="layui-form layui-form-pane" action=""
                      enctype="multipart/form-data" method="post">
                 <div class="layui-btn-container">
                     <button type="button" class="layui-btn layui-btn-normal" id="choseFile">选择文件</button>

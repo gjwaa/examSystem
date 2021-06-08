@@ -73,68 +73,75 @@
 </head>
 
 <body>
-
-<div class="layui-container">
-
+<div style="width: 100%;height: 100%;z-index: -1;background: url('${pageContext.request.contextPath}/images/bk.png') no-repeat;background-size: 100% 100%">
     <div class="layui-row">
-        <div class="layui-col-md4">
-            <div class="grid-demo grid-demo-bg1">&nbsp;</div>
-        </div>
-        <div class="layui-col-md4">
-            <div class="grid-demo">
-                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
-                    <legend>考试后台登录系统</legend>
-                </fieldset>
-
-                <form class="layui-form layui-form-pane" action="${pageContext.request.contextPath}/admin/login"
-                      method="post">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">账号</label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="acc" name="acc" lay-verify="required" placeholder="请输入账号"
-                                   autocomplete="off" class="layui-input"
-                                   onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" style="ime-mode:inactive" required>
-                        </div>
-                    </div>
-
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">密码</label>
-                        <div class="layui-input-inline">
-                            <input type="password" id="pwd" name="pwd" placeholder="请输入密码" autocomplete="off"
-                                   class="layui-input" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')"
-                                   style="ime-mode:inactive" required>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">验证码</label>
-                        <div class="layui-input-inline">
-                            <div class="layui-inline" style="width: 40%; height: 35px;">
-                                <input id="verify" name="clientVerify" class="layui-input" style="width: 85px"
-                                       type="text" placeholder="验证码" autocomplete="off"
-                                       onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" style="ime-mode:inactive"
-                                       required/>
+        <div class="layui-col-md12" style="width: 100%;height: 30%"> </div>
+    </div>
+    <div class="layui-container">
+        <div class="layui-row">
+            <div class="layui-col-md4">
+                <div class="grid-demo grid-demo-bg1">&nbsp;</div>
+            </div>
+            <div class="layui-col-md4" style="background: rgba(255,255,255,0.5);border-radius: 20px">
+                <div class="grid-demo">
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+                        <legend>考试后台登录系统</legend>
+                    </fieldset>
+                    <div class="layui-container">
+                        <form class="layui-form layui-form-pane" action="${pageContext.request.contextPath}/admin/login"
+                              method="post">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">账号</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="acc" name="acc" lay-verify="required" placeholder="请输入账号"
+                                           autocomplete="off" class="layui-input"
+                                           onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" style="ime-mode:inactive"
+                                           required>
+                                </div>
                             </div>
-                            <img src="${pageContext.request.contextPath}/admin/verify" id="verifyImg"/>
-                        </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">密码</label>
+                                <div class="layui-input-inline">
+                                    <input type="password" id="pwd" name="pwd" placeholder="请输入密码" autocomplete="off"
+                                           class="layui-input" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')"
+                                           style="ime-mode:inactive" required>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">验证码</label>
+                                <div class="layui-input-inline">
+                                    <div class="layui-inline" style="width: 40%; height: 35px;">
+                                        <input id="verify" name="clientVerify" class="layui-input" style="width: 85px"
+                                               type="text" placeholder="验证码" autocomplete="off"
+                                               onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" style="ime-mode:inactive"
+                                               required/>
+                                    </div>
+                                    <img src="${pageContext.request.contextPath}/admin/verify" id="verifyImg"/>
+                                </div>
+                            </div>
+                            <div class="layui-form-mid layui-word-aux" id="tips" style="color: #009688">提示：请输入信息</div>
+
+
+                            <div class="layui-form-item">
+                                <div class="layui-container" style="width: 85%";>
+                                <input type="submit" id="login" class="layui-btn layui-btn-primary layui-border-green"
+                                       value="登录">
+                                <input type="reset" class="layui-btn layui-btn-primary layui-border-green" value="重置">
+                                </div>
+                            </div>
+
+                        </form>
                     </div>
-                    <div class="layui-form-mid layui-word-aux" id="tips">提示：请输入信息</div>
-
-
-                    <div class="layui-form-item">
-                        <input type="submit" id="login" class="layui-btn layui-btn-primary layui-border-green" value="登录">
-                        <input type="reset" class="layui-btn layui-btn-primary layui-border-green" value="重置">
-                    </div>
-
-                </form>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="grid-demo grid-demo-bg1">&nbsp;</div>
             </div>
         </div>
-        <div class="layui-col-md4">
-            <div class="grid-demo grid-demo-bg1">&nbsp;</div>
-        </div>
-
     </div>
-</div>
 
+</div>
 
 </body>
 </html>

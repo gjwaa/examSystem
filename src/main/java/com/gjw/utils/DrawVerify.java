@@ -34,7 +34,7 @@ public class DrawVerify {
     }
 
     public static void setBorder(Graphics g) {
-        g.setColor(Color.BLUE);
+        g.setColor(new Color( 111,111,111));
         g.drawRect(1, 1, WIDTH - 2, HEIGHT - 2);
     }
 

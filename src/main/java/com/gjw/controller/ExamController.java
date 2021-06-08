@@ -1,6 +1,6 @@
 package com.gjw.controller;
 
-import com.gjw.utils.UnZipAnRar;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,14 +28,6 @@ public class ExamController {
 
     @RequestMapping("/showInfo")
     public String showInfo(HttpSession session) {
-        String fileLoadUrl = (String) session.getAttribute("fileLoadUrl");
-        File zipFile = new File(fileLoadUrl);
-        try {
-            String fileRootUrl = (String) session.getAttribute("fileRootUrl");
-            UnZipAnRar.unZip(zipFile, fileRootUrl);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         return "examManage";
     }

@@ -4,7 +4,8 @@ package com.gjw.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gjw.utils.DrawVerify;
-import com.gjw.utils.UnZipAnRar;
+
+import com.gjw.utils.ZipUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
@@ -123,7 +124,8 @@ public class LoginController {
 
     @ResponseBody
     @RequestMapping("/upLoad")
-    public String upLoad(@RequestParam("file") CommonsMultipartFile file, HttpServletRequest request, Model model) throws IOException {
+    public String upLoad(@RequestParam("file") CommonsMultipartFile file,String zipPwd, HttpServletRequest request, Model model) throws IOException {
+        System.out.println("128");
         String path = request.getServletContext().getRealPath("/upload");
         File realPath = new File(path);
         if (!realPath.exists()) {
@@ -140,12 +142,7 @@ public class LoginController {
         jsonObject.put("msg", "ok");
 
 
-        File zipFile = new File(dest.getAbsolutePath());
-        try {
-            UnZipAnRar.unZip(zipFile, realPath.getAbsolutePath()+"\\");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ZipUtil.unzip(dest,realPath.getAbsolutePath(),zipPwd);
 
 
         return jsonObject.toString();
