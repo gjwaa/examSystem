@@ -19,7 +19,8 @@
                 ,element = layui.element
                 ,layer = layui.layer;
             var inputValue;
-            //选完文件后不自动上传
+            var files;
+                //选完文件后不自动上传
             upload.render({
                 elem: '#choseFile'
                 ,url: '${pageContext.request.contextPath}/admin/upLoad'
@@ -35,18 +36,19 @@
                         value: '',
                         title: '请输入压缩包解压密码',
                         btn: ['确定','取消'], //按钮，
-                        btnAlign: 'c'
+                        btnAlign: 'c',
                     }, function(value,index){
                         layer.close(index);
                         inputValue = value;
                         console.log(value)
-                        var files = obj.pushFile();
-                        for (let x in files) {
-                            delete files[x];
+                        var oldFiles = obj.pushFile();
+                        for (let x in oldFiles) {
+                            delete oldFiles[x];
                         }
                         var files = obj.pushFile();
                         obj.preview(function (index, file, result) {
                             console.log(files[index].name);
+                            $("#fileName").text('文件名称：'+files[index].name);
                             layer.msg("加载成功，请点击上传");
                         });
                     });
@@ -60,6 +62,12 @@
                 ,done: function(res){
                     layer.msg('上传成功');
                     layer.closeAll('loading');
+                    for (let x in files) {
+                        console.log(files[x].name)
+                        delete files[x];
+                    }
+
+                    $(location).attr("href", "${pageContext.request.contextPath}/exam/showInfo")
                     console.log(res)
 
                 }
@@ -87,12 +95,12 @@
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
                     <legend>试卷导入</legend>
                 </fieldset>
-                <form class="layui-form layui-form-pane" action=""
-                     enctype="multipart/form-data" method="post">
+                <form class="layui-form layui-form-pane" action="" enctype="multipart/form-data" method="post">
                 <div class="layui-btn-container">
                     <button type="button" class="layui-btn layui-btn-normal" id="choseFile">选择文件</button>
                     <button type="button" class="layui-btn" id="doUpload">开始上传</button>
                 </div>
+                    <div class="layui-form-mid layui-word-aux" id="fileName" style="color: #009688"></div>
                 </form>
 
             </div>

@@ -30,7 +30,7 @@
     <!--拦截器配置-->
     <mvc:interceptors>
         <mvc:interceptor>
-            <mvc:mapping path="/user/**"/>
+            <mvc:mapping path="/admin/**"/>
             <bean class="com.gjw.config.LoginInterceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>

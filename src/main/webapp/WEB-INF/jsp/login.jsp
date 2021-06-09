@@ -117,7 +117,8 @@
                                                onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" style="ime-mode:inactive"
                                                required/>
                                     </div>
-                                    <img src="${pageContext.request.contextPath}/admin/verify" id="verifyImg"/>
+                                    <img style="cursor:hand" src="${pageContext.request.contextPath}/admin/verify" id="verifyImg"/>
+
                                 </div>
                             </div>
                             <div class="layui-form-mid layui-word-aux" id="tips" style="color: #009688">提示：请输入信息</div>

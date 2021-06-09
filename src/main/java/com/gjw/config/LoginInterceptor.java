@@ -9,6 +9,10 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if (request.getRequestURI().contains("checkAcc")||request.getRequestURI().contains("checkPwd")||request.getRequestURI().contains("checkVerify")) {
+//            System.err.println(request.getRequestURI());
+            return true;
+        }
 
 
         if (request.getRequestURI().contains("login")) {
@@ -16,7 +20,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        if (request.getSession().getAttribute("userLoginInfo") != null) {
+        if (request.getSession().getAttribute("adminLoginInfo") != null) {
 //            System.out.println(request.getRequestURI());
             return true;
         }

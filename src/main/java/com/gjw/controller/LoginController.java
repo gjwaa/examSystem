@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.imageio.ImageIO;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,6 +23,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -124,8 +126,16 @@ public class LoginController {
 
     @ResponseBody
     @RequestMapping("/upLoad")
-    public String upLoad(@RequestParam("file") CommonsMultipartFile file,String zipPwd, HttpServletRequest request, Model model) throws IOException {
-        System.out.println("128");
+    public String upLoad(@RequestParam("file") CommonsMultipartFile file,String zipPwd,HttpServletResponse response, HttpServletRequest request, Model model) throws IOException, ServletException {
+        response.setDateHeader("Expires",0);
+        response.setHeader("Buffer","True");
+        response.setHeader("Cache-Control","no-cache");
+        response.setHeader("Cache-Control","no-store");
+        response.setHeader("Expires","0");
+        response.setHeader("ETag",String.valueOf(System.currentTimeMillis()));
+        response.setHeader("Pragma","no-cache");
+        response.setHeader("Date",String.valueOf(new Date()));
+        response.setHeader("Last-Modified",String.valueOf(new Date()));
         String path = request.getServletContext().getRealPath("/upload");
         File realPath = new File(path);
         if (!realPath.exists()) {
@@ -138,16 +148,20 @@ public class LoginController {
         HttpSession session = request.getSession();
         session.setAttribute("fileLoadUrl", dest.getAbsolutePath());
         session.setAttribute("fileRootUrl", realPath);
+        session.setAttribute("fileName", dest.getName());
         JSONObject jsonObject = new JSONObject();
+        File[] files = ZipUtil.unzip(dest, realPath.getAbsolutePath(), zipPwd);
+        for (File zipFile : files) {
+            System.out.println(zipFile.getAbsolutePath()+"<<<<<");
+            session.setAttribute(zipFile.getName(), zipFile.getAbsolutePath());
+        }
         jsonObject.put("msg", "ok");
-
-
-        ZipUtil.unzip(dest,realPath.getAbsolutePath(),zipPwd);
-
 
         return jsonObject.toString();
 
     }
+
+
 
 
 }
