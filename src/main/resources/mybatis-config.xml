@@ -18,6 +18,7 @@
     <mappers>
         <!-- 引用自身项目中mybatis的mapper，也就是第四步的文件 -->
         <mapper resource="mapper/UserMapper.xml"/>
+        <mapper resource="mapper/StudentMapper.xml"/>
 
     </mappers>
 </configuration>

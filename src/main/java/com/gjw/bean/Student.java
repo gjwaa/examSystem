@@ -13,9 +13,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InfoVo {
-    private String code;
-    private String name;
-    private String date;
-    private String money;
+public class Student {
+    private int sID;
+    private String aNumber;
+    private String IDCard;
+    private String sName;
+    private String sSex;
+    private int sAge;
 }

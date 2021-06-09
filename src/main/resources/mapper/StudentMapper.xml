@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gjw.mapper.StudentMapper">
+
+    <insert id="insertStudentInfo" parameterType="java.util.List">
+        insert into student (aNumber, IDCard, sName, sSex, sAge)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.aNumber},
+            #{item.IDCard},
+            #{item.sName},
+            #{item.sSex},
+            #{item.sAge}
+            )
+        </foreach>
+    </insert>
+
+
+</mapper>

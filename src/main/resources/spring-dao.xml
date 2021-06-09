@@ -20,7 +20,7 @@
         <property name="driverClassName"
                   value="com.mysql.cj.jdbc.Driver"></property>
         <property name="url"
-                  value="jdbc:mysql://rm-bp1zmv00pzwfip28ato.mysql.rds.aliyuncs.com:3306/exam?useSSl=true&amp;useUnicode=true&amp;characterEncoding=UTF-8">
+                  value="jdbc:mysql://rm-bp1zmv00pzwfip28ato.mysql.rds.aliyuncs.com:3306/examsystem?useSSl=true&amp;useUnicode=true&amp;characterEncoding=UTF-8">
         </property>
         <property name="username" value="gjw"></property>
         <property name="password" value="123guan!@#"></property>
