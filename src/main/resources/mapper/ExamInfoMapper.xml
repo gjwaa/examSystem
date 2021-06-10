@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gjw.mapper.ExamInfoMapper">
+
+    <select id="checkExamRepeat" parameterType="String" resultType="int">
+        select count(*)
+        from examinfo
+        where eNum=#{eNum}
+    </select>
+
+
+    <insert id="insertExamInfo" parameterType="ExamInfo">
+        insert into examinfo (eNum, eName, eTime, eType, eWork, eOrgan, eLevel, ePeople, eScore, courseID,
+        courseName)
+        values
+        (
+            #{eNum},#{eName},#{eTime},#{eType},#{eWork},#{eOrgan},#{eLevel},#{ePeople},#{eScore},#{courseID},#{courseName}
+        )
+    </insert>
+
+</mapper>

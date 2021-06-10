@@ -18,7 +18,7 @@ public class ExamInfo {
     private String eOrgan;
     private String eLevel;
     private int ePeople;
-    private int eScore;
+    private String eScore;
     private int courseID;
     private String courseName;
 

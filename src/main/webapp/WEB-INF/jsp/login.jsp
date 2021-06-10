@@ -15,7 +15,7 @@
         $(function () {
             $("#verifyImg").click(function () {
                 $("#verifyImg").attr("src", "${pageContext.request.contextPath}/admin/verify?" + Math.random());
-            })
+            });
 
             $("#acc").blur(function () {
                 $.post({
@@ -32,7 +32,7 @@
                         }
                     }
                 })
-            })
+            });
 
             $("#pwd").blur(function () {
                 $.post({
@@ -49,7 +49,7 @@
                         }
                     }
                 })
-            })
+            });
 
             $("#verify").blur(function () {
                 $.post({
@@ -67,6 +67,10 @@
                     }
                 })
             })
+
+            // $("#acc").blur(function (){
+            //     $("#acc").css("ime-mode","disabled");
+            // })
 
         })
     </script>
@@ -87,7 +91,7 @@
                     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
                         <legend>考试后台登录系统</legend>
                     </fieldset>
-                    <div class="layui-container">
+                    <div class="layui-container" style="width: 100%">
                         <form class="layui-form layui-form-pane" action="${pageContext.request.contextPath}/admin/login"
                               method="post">
                             <div class="layui-form-item">

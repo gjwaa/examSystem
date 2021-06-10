@@ -5,10 +5,11 @@
 <mapper namespace="com.gjw.mapper.StudentMapper">
 
     <insert id="insertStudentInfo" parameterType="java.util.List">
-        insert into student (aNumber, IDCard, sName, sSex, sAge)
+        insert into student (eNum,aNumber, IDCard, sName, sSex, sAge)
         values
         <foreach collection="list" item="item" separator=",">
             (
+            #{item.eNum},
             #{item.aNumber},
             #{item.IDCard},
             #{item.sName},
