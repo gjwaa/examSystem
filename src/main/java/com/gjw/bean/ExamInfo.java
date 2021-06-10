@@ -19,7 +19,7 @@ public class ExamInfo {
     private String eLevel;
     private int ePeople;
     private String eScore;
-    private int courseID;
+    private String courseID;
     private String courseName;
 
 

@@ -151,6 +151,7 @@ public class LoginController {
         session.setAttribute("fileName", dest.getName());
         JSONObject jsonObject = new JSONObject();
         File[] files = ZipUtil.unzip(dest, realPath.getAbsolutePath(), zipPwd);
+
         for (File zipFile : files) {
             System.out.println(zipFile.getAbsolutePath()+"<<<<<");
             session.setAttribute(zipFile.getName(), zipFile.getAbsolutePath());

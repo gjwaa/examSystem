@@ -20,4 +20,9 @@ public class StudentServiceImpl implements StudentService {
     public int insertStudentInfo(List<Student> list) {
         return studentMapper.insertStudentInfo(list);
     }
+
+    @Override
+    public int queryStudentCountByENUM(String eNum) {
+        return studentMapper.queryStudentCountByENUM(eNum);
+    }
 }

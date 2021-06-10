@@ -14,6 +14,7 @@
     <script src="${pageContext.request.contextPath}/js/jquery-3.6.0.js"></script>
     <script src="${pageContext.request.contextPath}/layui/layui.js"></script>
     <script>
+        <c:set var="load" scope="session" value="${'noOK'}"/>
         layui.use(['upload', 'element', 'layer'], function () {
             var $ = layui.jquery
                 , upload = layui.upload
@@ -67,10 +68,8 @@
                         console.log(files[x].name)
                         delete files[x];
                     }
-
                     $(location).attr("href", "${pageContext.request.contextPath}/exam/showInfo")
                     console.log(res)
-
                 }
                 , error: function (res) {
                     layer.msg('解压密码有误');
@@ -79,20 +78,51 @@
                 }
             });
 
-
         });
+
+        layui.use('table', function () {
+            var table = layui.table;
+
+            table.render({
+                elem: '#examInfo'
+                , page: false
+                , url: '${pageContext.request.contextPath}/exam/examInfo'
+                , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                , cols: [[
+                    {field: 'eName', title: '考试名称', sort: true, width: "13%"}
+                    , {field: 'courseName', title: '考试试卷'}
+                    , {field: 'eTime', title: '考试时间', sort: true}
+                    , {field: 'eType', title: '考试类型'}
+                    , {field: 'eWork', title: '鉴定工种',}
+                    , {field: 'eOrgan', title: '鉴定机构'}
+                    , {field: 'eLevel', title: '鉴定等级'}
+                    , {field: 'eScore', title: '及格分数', sort: true}
+                    , {field: 'ePeople', title: '考试人数', sort: true}
+                ]]
+                , parseData: function (res) {
+                    console.log(res)
+                    return {
+                        "code": res.code,
+                        "msg": res.msg,
+                        "data": res.data
+                    };
+                }
+            });
+        });
+
+
     </script>
 </head>
 <body>
 <div class="layui-container">
 
     <div class="layui-row">
-        <div class="layui-col-md3">
+        <div class="layui-col-md1">
             <div class="grid-demo grid-demo-bg1">&nbsp;</div>
         </div>
-        <div class="layui-col-md6">
+        <div class="layui-col-md10">
             <div class="grid-demo">
-                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 80px;">
                     <legend>试卷导入</legend>
                 </fieldset>
                 <form class="layui-form layui-form-pane" action="" enctype="multipart/form-data" method="post">
@@ -105,47 +135,34 @@
 
             </div>
         </div>
-        <div class="layui-col-md3">
+        <div class="layui-col-md1">
             <div class="grid-demo grid-demo-bg1">&nbsp;</div>
         </div>
 
     </div>
 
     <div class="layui-row">
-        <div class="layui-col-md3">
+        <div class="layui-col-md1">
             <div class="grid-demo grid-demo-bg1">&nbsp;</div>
         </div>
-        <div class="layui-col-md6">
+        <div class="layui-col-md10">
             <div class="grid-demo">
-                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
-                    <legend>试卷信息</legend>
-                </fieldset>
-                <table class="layui-hide" id="examInfo"></table>
-                <script>
-                    layui.use('table', function () {
-                        var table = layui.table;
+                <fieldset class="layui-elem-field" style="margin-top: 30px;">
+                    <legend id="info">试卷信息——请上传文件</legend>
+                    <div class="layui-field-box">
+                        <table class="layui-hide" id="examInfo"></table>
 
-                        table.render({
-                            elem: '#examInfo'
-                            , url: '${pageContext.request.contextPath}/exam/examInfo'
-                            , cellMinWidth: 80 //全局定义常规单元格的最小宽度
-                            , cols: [[
-                                {field: 'id', title: '考试名称', sort: true}
-                                , {field: 'username', title: '考试时间'} //width 支持：数字、百分比和不填写。你还可以通过 minWidth 参数局部定义当前单元格的最小宽度，layui 2.2.1 新增
-                                , {field: 'sex', title: '鉴定工种', sort: true}
-                                , {field: 'city', title: '鉴定等级'}
-                                , {field: 'sign', title: '考生人数'}
-                                , {field: 'classify', title: '考试试卷', align: 'center'} //单元格内容水平居中
-                                , {field: 'experience', title: '考试类型', sort: true, align: 'right'} //单元格内容水平居右
-                                , {field: 'score', title: '鉴定机构', sort: true, align: 'right'}
-                                , {field: 'wealth', title: '及格分数', sort: true, align: 'right'}
-                            ]]
-                        });
-                    });
-                </script>
+                        <c:if test="${load=='ok'}">
+                            <h1><c:out value="${load}"></c:out></h1>
+                            <script>$("#info").text("试卷信息")</script>
+                        </c:if>
+                    </div>
+                </fieldset>
+
             </div>
+
         </div>
-        <div class="layui-col-md3">
+        <div class="layui-col-md1">
             <div class="grid-demo grid-demo-bg1">&nbsp;</div>
         </div>
 

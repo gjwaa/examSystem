@@ -1,22 +1,28 @@
 package com.gjw.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.gjw.bean.ExamInfo;
 import com.gjw.bean.Student;
+import com.gjw.bean.TableData;
 import com.gjw.service.ExamInfoService;
 import com.gjw.service.StudentService;
 import com.gjw.utils.ExcelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @version 1.0
@@ -60,6 +66,8 @@ public class ExamController {
             examInfo.setEOrgan(String.valueOf(lo.get(5)));
             examInfo.setELevel(String.valueOf(lo.get(6)));
             examInfo.setEScore(String.valueOf(lo.get(7)));
+            examInfo.setCourseID(String.valueOf(lo.get(10)));
+            examInfo.setCourseName(String.valueOf(lo.get(11)));
         }
         System.out.println("===>" + examInfo);
         int count = examInfoService.checkExamRepeat(examInfo.getENum());
@@ -92,14 +100,44 @@ public class ExamController {
             System.err.println(bankListByExcel);
         }
 
+        int countByENUM = studentService.queryStudentCountByENUM(examInfo.getENum());
+        examInfo.setEPeople(countByENUM);
+        session.setAttribute("examInfo",examInfo);
+
+
         return "examManage";
 
     }
 
     @RequestMapping("/examInfo")
-    public String examInfo(){
+    @ResponseBody
+    public String examInfo(HttpSession session,int page,int limit){
+        ExamInfo examInfo = (ExamInfo) session.getAttribute("examInfo");
+//        TableData tableData = new TableData();
+//        tableData.setCode(0);//
+//        tableData.setMsg("成功");//执行成功返回“成功”
+        System.out.println(">>>>"+page+">>>>"+limit);
+//        tableData.setData(examInfo);//设置当前数据
+        Map map = new HashMap();
+        List<ExamInfo> list = new ArrayList<ExamInfo>();
+//        JSONObject jsonObject = new JSONObject();
+//        jsonObject.put("code",0);
+//        jsonObject.put("msg","ok");
+//        jsonObject.put("count","1000");
+//        jsonObject.put("data",list);
+        list.add(examInfo);
+        map.put("code",0);
+        map.put("msg","table-service-OK");
+        map.put("count",100);
+        map.put("data",list);
+//        JSONObject jsonObject = JSONObject.parseObject(JSONObject.toJSONString(map));
+//        return jsonObject;
 
-        return "";
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code",0);
+        jsonObject.put("msg","table-ok");
+        jsonObject.put("data",list);
+        return jsonObject.toString();
     }
 
 
