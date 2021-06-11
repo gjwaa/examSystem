@@ -14,7 +14,7 @@
     <script src="${pageContext.request.contextPath}/js/jquery-3.6.0.js"></script>
     <script src="${pageContext.request.contextPath}/layui/layui.js"></script>
     <script>
-        <c:set var="load" scope="session" value="${'noOK'}"/>
+
         layui.use(['upload', 'element', 'layer'], function () {
             var $ = layui.jquery
                 , upload = layui.upload
@@ -47,6 +47,7 @@
                         for (let x in oldFiles) {
                             delete oldFiles[x];
                         }
+
                         var files = obj.pushFile();
                         obj.preview(function (index, file, result) {
                             console.log(files[index].name);
@@ -60,8 +61,10 @@
                 , before: function (obj) {
                     layer.load(); //上传loading
                     this.data = {'zipPwd': inputValue};
+
                 }
                 , done: function (res) {
+
                     layer.msg('上传成功');
                     layer.closeAll('loading');
                     for (let x in files) {
@@ -70,6 +73,7 @@
                     }
                     $(location).attr("href", "${pageContext.request.contextPath}/exam/showInfo")
                     console.log(res)
+
                 }
                 , error: function (res) {
                     layer.msg('解压密码有误');
@@ -80,35 +84,49 @@
 
         });
 
-        layui.use('table', function () {
-            var table = layui.table;
 
-            table.render({
-                elem: '#examInfo'
-                , page: false
-                , url: '${pageContext.request.contextPath}/exam/examInfo'
-                , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
-                , cols: [[
-                    {field: 'eName', title: '考试名称', sort: true, width: "13%"}
-                    , {field: 'courseName', title: '考试试卷'}
-                    , {field: 'eTime', title: '考试时间', sort: true}
-                    , {field: 'eType', title: '考试类型'}
-                    , {field: 'eWork', title: '鉴定工种',}
-                    , {field: 'eOrgan', title: '鉴定机构'}
-                    , {field: 'eLevel', title: '鉴定等级'}
-                    , {field: 'eScore', title: '及格分数', sort: true}
-                    , {field: 'ePeople', title: '考试人数', sort: true}
-                ]]
-                , parseData: function (res) {
-                    console.log(res)
-                    return {
-                        "code": res.code,
-                        "msg": res.msg,
-                        "data": res.data
-                    };
-                }
+            layui.use('table', function () {
+                var table = layui.table;
+
+                table.render({
+                    elem: '#examInfo'
+                    , page: false
+                    , url: '${pageContext.request.contextPath}/exam/examInfo'
+                    , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                    , cols: [[
+                        {field: 'eName', title: '考试名称', sort: true, width: "13%"}
+                        , {field: 'courseName', title: '考试试卷'}
+                        , {field: 'eTime', title: '考试时间', sort: true}
+                        , {field: 'eType', title: '考试类型'}
+                        , {field: 'eWork', title: '鉴定工种',}
+                        , {field: 'eOrgan', title: '鉴定机构'}
+                        , {field: 'eLevel', title: '鉴定等级'}
+                        , {field: 'eScore', title: '及格分数', sort: true}
+                        , {field: 'ePeople', title: '考试人数', sort: true}
+                    ]]
+                    , parseData: function (res) {
+                        console.log(res)
+                        return {
+                            "code": res.code,
+                            "msg": res.msg,
+                            "data": res.data
+                        };
+                    }
+                });
             });
-        });
+
+            $(function (){
+                $("#viewPaper").click(function (){
+                    // $.post({
+                    //     url:'',
+                    //     data:{},
+                    //     dataType:'',
+                    //
+                    // })
+                    window.open('${pageContext.request.contextPath}/exam/viewPaper');
+                })
+            })
+
 
 
     </script>
@@ -148,14 +166,12 @@
         <div class="layui-col-md10">
             <div class="grid-demo">
                 <fieldset class="layui-elem-field" style="margin-top: 30px;">
-                    <legend id="info">试卷信息——请上传文件</legend>
+                    <legend id="info">试卷信息</legend>
                     <div class="layui-field-box">
-                        <table class="layui-hide" id="examInfo"></table>
 
-                        <c:if test="${load=='ok'}">
-                            <h1><c:out value="${load}"></c:out></h1>
-                            <script>$("#info").text("试卷信息")</script>
-                        </c:if>
+                        <table class="layui-hide" id="examInfo"></table>
+                        <button type="button" class="layui-btn" id="viewPaper">预览试卷</button>
+                        <button type="button" class="layui-btn" id="viewInfo">预览考生信息</button>
                     </div>
                 </fieldset>
 

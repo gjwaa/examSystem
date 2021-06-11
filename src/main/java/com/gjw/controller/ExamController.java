@@ -3,6 +3,7 @@ package com.gjw.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gjw.bean.ExamInfo;
+import com.gjw.bean.Question;
 import com.gjw.bean.Student;
 import com.gjw.bean.TableData;
 import com.gjw.service.ExamInfoService;
@@ -56,6 +57,7 @@ public class ExamController {
         examIn.close();
 //        List<ExamInfo> exams = new ArrayList<ExamInfo>();
         ExamInfo examInfo = new ExamInfo();
+
         for (int i = 0; i < 1; i++) {
             List<Object> lo = examListByExcel.get(i);
             examInfo.setENum(String.valueOf(lo.get(0)));
@@ -66,6 +68,8 @@ public class ExamController {
             examInfo.setEOrgan(String.valueOf(lo.get(5)));
             examInfo.setELevel(String.valueOf(lo.get(6)));
             examInfo.setEScore(String.valueOf(lo.get(7)));
+            session.setAttribute("multipleInfo",lo.get(8));//多选信息
+            session.setAttribute("singleInfo",lo.get(9));//单选信息
             examInfo.setCourseID(String.valueOf(lo.get(10)));
             examInfo.setCourseName(String.valueOf(lo.get(11)));
         }
@@ -102,7 +106,40 @@ public class ExamController {
 
         int countByENUM = studentService.queryStudentCountByENUM(examInfo.getENum());
         examInfo.setEPeople(countByENUM);
-        session.setAttribute("examInfo",examInfo);
+        session.setAttribute("examInfo", examInfo);
+
+        List<Question> singleOpt = new ArrayList<Question>();
+        List<Question> multipleOpt = new ArrayList<Question>();
+        for (int i = 2; i < 17; i++) {
+            Question singleQuestion = new Question();
+            Question multipleQuestion = new Question();
+            List<Object> lo = examListByExcel.get(i);
+            if(String.valueOf(lo.get(0)).equals("单选题")){
+                singleQuestion.setQType(String.valueOf(lo.get(0)));
+                singleQuestion.setQNum(String.valueOf(lo.get(1)));
+                singleQuestion.setQTitle(String.valueOf(lo.get(2)));
+                singleQuestion.setQOptA(String.valueOf(lo.get(3)));
+                singleQuestion.setQOptB(String.valueOf(lo.get(4)));
+                singleQuestion.setQOptC(String.valueOf(lo.get(5)));
+                singleQuestion.setQOptD(String.valueOf(lo.get(6)));
+                singleQuestion.setQAnswer(String.valueOf(lo.get(7)));
+                singleQuestion.setQScore(String.valueOf(lo.get(8)));
+                singleOpt.add(singleQuestion);
+                session.setAttribute("singleOptList",singleOpt);
+            }else if(String.valueOf(lo.get(0)).equals("多选题")){
+                multipleQuestion.setQType(String.valueOf(lo.get(0)));
+                multipleQuestion.setQNum(String.valueOf(lo.get(1)));
+                multipleQuestion.setQTitle(String.valueOf(lo.get(2)));
+                multipleQuestion.setQOptA(String.valueOf(lo.get(3)));
+                multipleQuestion.setQOptB(String.valueOf(lo.get(4)));
+                multipleQuestion.setQOptC(String.valueOf(lo.get(5)));
+                multipleQuestion.setQOptD(String.valueOf(lo.get(6)));
+                multipleQuestion.setQAnswer(String.valueOf(lo.get(7)));
+                multipleQuestion.setQScore(String.valueOf(lo.get(8)));
+                multipleOpt.add(multipleQuestion);
+                session.setAttribute("multipleOptList",multipleOpt);
+            }
+        }
 
 
         return "examManage";
@@ -111,37 +148,27 @@ public class ExamController {
 
     @RequestMapping("/examInfo")
     @ResponseBody
-    public String examInfo(HttpSession session,int page,int limit){
+    public String examInfo(HttpSession session, int page, int limit) {
         ExamInfo examInfo = (ExamInfo) session.getAttribute("examInfo");
-//        TableData tableData = new TableData();
-//        tableData.setCode(0);//
-//        tableData.setMsg("成功");//执行成功返回“成功”
-        System.out.println(">>>>"+page+">>>>"+limit);
-//        tableData.setData(examInfo);//设置当前数据
-        Map map = new HashMap();
+
+        System.out.println(">>>>" + page + ">>>>" + limit);
+
         List<ExamInfo> list = new ArrayList<ExamInfo>();
-//        JSONObject jsonObject = new JSONObject();
-//        jsonObject.put("code",0);
-//        jsonObject.put("msg","ok");
-//        jsonObject.put("count","1000");
-//        jsonObject.put("data",list);
+
         list.add(examInfo);
-        map.put("code",0);
-        map.put("msg","table-service-OK");
-        map.put("count",100);
-        map.put("data",list);
-//        JSONObject jsonObject = JSONObject.parseObject(JSONObject.toJSONString(map));
-//        return jsonObject;
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code",0);
-        jsonObject.put("msg","table-ok");
-        jsonObject.put("data",list);
+        jsonObject.put("code", 0);
+        jsonObject.put("msg", "table-ok");
+        jsonObject.put("data", list);
         return jsonObject.toString();
     }
 
+    @RequestMapping("viewPaper")
+    public String viewPaper(){
 
-
+        return "viewPaper";
+    }
 
 
 }

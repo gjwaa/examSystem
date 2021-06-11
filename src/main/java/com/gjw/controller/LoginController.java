@@ -157,6 +157,7 @@ public class LoginController {
             session.setAttribute(zipFile.getName(), zipFile.getAbsolutePath());
         }
         jsonObject.put("msg", "ok");
+        jsonObject.put("code", 0);
 
         return jsonObject.toString();
 
