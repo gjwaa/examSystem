@@ -13,6 +13,11 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/layui/css/layui.css" media="all">
     <script src="${pageContext.request.contextPath}/js/jquery-3.6.0.js"></script>
     <script src="${pageContext.request.contextPath}/layui/layui.js"></script>
+    <style>
+        body {
+            height: 100%;
+        }
+    </style>
     <script>
 
         layui.use(['upload', 'element', 'layer'], function () {
@@ -85,48 +90,75 @@
         });
 
 
-            layui.use('table', function () {
-                var table = layui.table;
+        layui.use('table', function () {
+            var table = layui.table;
 
-                table.render({
-                    elem: '#examInfo'
-                    , page: false
-                    , url: '${pageContext.request.contextPath}/exam/examInfo'
-                    , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
-                    , cols: [[
-                        {field: 'eName', title: '考试名称', sort: true, width: "13%"}
-                        , {field: 'courseName', title: '考试试卷'}
-                        , {field: 'eTime', title: '考试时间', sort: true}
-                        , {field: 'eType', title: '考试类型'}
-                        , {field: 'eWork', title: '鉴定工种',}
-                        , {field: 'eOrgan', title: '鉴定机构'}
-                        , {field: 'eLevel', title: '鉴定等级'}
-                        , {field: 'eScore', title: '及格分数', sort: true}
-                        , {field: 'ePeople', title: '考试人数', sort: true}
-                    ]]
-                    , parseData: function (res) {
-                        console.log(res)
-                        return {
-                            "code": res.code,
-                            "msg": res.msg,
-                            "data": res.data
-                        };
-                    }
-                });
+            table.render({
+                elem: '#examInfo'
+                , page: false
+                , url: '${pageContext.request.contextPath}/exam/examInfo'
+                , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                , cols: [[
+                    {field: 'eName', title: '考试名称', sort: true, width: "12%"}
+                    , {field: 'courseName', title: '考试试卷', width: "13%"}
+                    , {field: 'eTime', title: '考试时间', sort: true}
+                    , {field: 'eType', title: '考试类型'}
+                    , {field: 'eWork', title: '鉴定工种',}
+                    , {field: 'eOrgan', title: '鉴定机构'}
+                    , {field: 'eLevel', title: '鉴定等级'}
+                    , {field: 'eScore', title: '及格分数', sort: true}
+                    , {field: 'ePeople', title: '考试人数', sort: true}
+                ]]
+                , parseData: function (res) {
+                    console.log(res)
+                    return {
+                        "code": res.code,
+                        "msg": res.msg,
+                        "data": res.data
+                    };
+                }
             });
+        });
 
-            $(function (){
-                $("#viewPaper").click(function (){
-                    // $.post({
-                    //     url:'',
-                    //     data:{},
-                    //     dataType:'',
-                    //
-                    // })
-                    window.open('${pageContext.request.contextPath}/exam/viewPaper');
-                })
+        $(function () {
+            $("#viewPaper").click(function () {
+                // $.post({
+                //     url:'',
+                //     data:{},
+                //     dataType:'',
+                //
+                // })
+                <%--window.open('${pageContext.request.contextPath}/exam/viewPaper');--%>
+                layer.open({
+                    title: '试卷预览',
+                    type: 2,
+                    area: ['60%', '60%'],
+                    fixed: false, //不固定
+                    maxmin: true,
+                    content: '${pageContext.request.contextPath}/exam/viewPaper'
+                });
             })
+        });
 
+        $(function () {
+            $("#viewInfo").click(function () {
+                <%--window.open('${pageContext.request.contextPath}/exam/viewStu');--%>
+                layer.open({
+                    title: '考生预览',
+                    type: 2,
+                    area: ['50%', '50%'],
+                    fixed: false, //不固定
+                    maxmin: true,
+                    content: '${pageContext.request.contextPath}/exam/viewStu'
+                });
+            })
+        });
+
+        $(function (){
+            $("#confirmInfo").click(function (){
+                $(location).attr("href", "${pageContext.request.contextPath}/exam/invigilator")
+            })
+        });
 
 
     </script>
@@ -168,10 +200,10 @@
                 <fieldset class="layui-elem-field" style="margin-top: 30px;">
                     <legend id="info">试卷信息</legend>
                     <div class="layui-field-box">
-
                         <table class="layui-hide" id="examInfo"></table>
                         <button type="button" class="layui-btn" id="viewPaper">预览试卷</button>
                         <button type="button" class="layui-btn" id="viewInfo">预览考生信息</button>
+                        <button type="button" class="layui-btn" id="confirmInfo">确认考试信息</button>
                     </div>
                 </fieldset>
 

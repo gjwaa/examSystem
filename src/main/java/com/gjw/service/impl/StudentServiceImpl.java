@@ -22,7 +22,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public int queryStudentCountByENUM(String eNum) {
-        return studentMapper.queryStudentCountByENUM(eNum);
+    public int queryStudentCountByEID(int eID) {
+        return studentMapper.queryStudentCountByEID(eID);
     }
 }

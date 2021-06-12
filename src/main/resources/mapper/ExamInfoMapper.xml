@@ -11,7 +11,10 @@
     </select>
 
 
-    <insert id="insertExamInfo" parameterType="ExamInfo">
+    <insert id="insertExamInfo" parameterType="ExamInfo"
+            useGeneratedKeys="true"
+            keyColumn="eID"
+            keyProperty="eID">
         insert into examinfo (eNum, eName, eTime, eType, eWork, eOrgan, eLevel, ePeople, eScore, courseID,
         courseName)
         values
@@ -19,5 +22,40 @@
             #{eNum},#{eName},#{eTime},#{eType},#{eWork},#{eOrgan},#{eLevel},#{ePeople},#{eScore},#{courseID},#{courseName}
         )
     </insert>
+
+    <delete id="delExamInfoByENUM" parameterType="String">
+        delete
+        from examinfo
+        where eNum=#{eNum}
+    </delete>
+
+    <select id="queryAllStuByEID" resultMap="stuVo">
+        SELECT s.sName,s.IDCard,s.aNumber,e.eName,e.eLevel
+        FROM student s,examinfo e
+        WHERE s.eID = e.eID
+        limit ${page},#{limit}
+    </select>
+    <resultMap id="stuVo" type="Student">
+        <result column="sName" property="sName"/>
+        <result column="IDCard" property="IDCard"/>
+        <result column="aNumber" property="aNumber"/>
+        <association property="examInfo" javaType="ExamInfo">
+            <result column="eName" property="eName"/>
+            <result column="eLevel" property="eLevel"/>
+        </association>
+    </resultMap>
+    
+    <update id="updateExamInfoByENUM" parameterType="Map">
+        update examinfo
+        set ePeople = #{ePeople}
+        where eID = #{eID}
+    </update>
+
+    <select id="queryExamInfoByENum" parameterType="String" resultType="ExamInfo">
+        select *
+        from examinfo where eNum=#{eNum}
+    </select>
+
+
 
 </mapper>

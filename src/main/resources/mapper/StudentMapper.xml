@@ -5,11 +5,11 @@
 <mapper namespace="com.gjw.mapper.StudentMapper">
 
     <insert id="insertStudentInfo" parameterType="java.util.List">
-        insert into student (eNum,aNumber, IDCard, sName, sSex, sAge)
+        insert into student (eID,aNumber, IDCard, sName, sSex, sAge)
         values
         <foreach collection="list" item="item" separator=",">
             (
-            #{item.eNum},
+            #{item.eID},
             #{item.aNumber},
             #{item.IDCard},
             #{item.sName},
@@ -19,8 +19,8 @@
         </foreach>
     </insert>
 
-    <select id="queryStudentCountByENUM" parameterType="String" resultType="int">
-        select count(*) from student where eNum=#{eNum}
+    <select id="queryStudentCountByEID" parameterType="int" resultType="int">
+        select count(*) from student where eID=#{eID}
     </select>
 
 

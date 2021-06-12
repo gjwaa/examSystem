@@ -10,6 +10,6 @@ public interface StudentMapper {
 
     int insertStudentInfo(List<Student> list);
 
-    int queryStudentCountByENUM(String eNum);
+    int queryStudentCountByEID(int eID);
 
 }

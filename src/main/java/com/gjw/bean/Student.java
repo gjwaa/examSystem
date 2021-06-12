@@ -15,12 +15,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Student {
     private int sID;
-    private String eNum;
+    private int eID;
     private String aNumber;
     private String IDCard;
     private String sName;
     private String sSex;
     private int sAge;
+    private ExamInfo examInfo;
 
 
 }

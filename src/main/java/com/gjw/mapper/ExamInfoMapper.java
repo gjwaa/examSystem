@@ -1,9 +1,13 @@
 package com.gjw.mapper;
 
 import com.gjw.bean.ExamInfo;
+import com.gjw.bean.Student;
+import com.gjw.bean.ViewStuVo;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @version 1.0
@@ -19,5 +23,12 @@ public interface ExamInfoMapper {
 
     int insertExamInfo(ExamInfo examInfo);
 
+    List<Student> queryAllStuByEID(@Param("eID") int eID,@Param("page") int page,@Param("limit") int limit);
+
+    int delExamInfoByENUM(String eNum);
+
+    int updateExamInfoByENUM(Map<String, Object> map);
+
+    ExamInfo queryExamInfoByENum(String eNum);
 
 }

@@ -68,13 +68,14 @@ public class ExamController {
             examInfo.setEOrgan(String.valueOf(lo.get(5)));
             examInfo.setELevel(String.valueOf(lo.get(6)));
             examInfo.setEScore(String.valueOf(lo.get(7)));
-            session.setAttribute("multipleInfo",lo.get(8));//多选信息
-            session.setAttribute("singleInfo",lo.get(9));//单选信息
+            session.setAttribute("multipleInfo", lo.get(8));//多选信息
+            session.setAttribute("singleInfo", lo.get(9));//单选信息
             examInfo.setCourseID(String.valueOf(lo.get(10)));
             examInfo.setCourseName(String.valueOf(lo.get(11)));
         }
         System.out.println("===>" + examInfo);
         int count = examInfoService.checkExamRepeat(examInfo.getENum());
+
         if (count <= 0) {
             examInfoService.insertExamInfo(examInfo);
             System.err.println(examListByExcel);
@@ -95,18 +96,23 @@ public class ExamController {
                 student.setANumber(String.valueOf(lo.get(0)));
                 student.setSName(String.valueOf(lo.get(1)));
                 student.setIDCard(String.valueOf(lo.get(2)));
-                student.setENum(String.valueOf(lo.get(3)));
+                student.setEID(examInfo.getEID());
                 students.add(student);
                 System.out.println("===>" + student);
             }
 
             studentService.insertStudentInfo(students);
             System.err.println(bankListByExcel);
-        }
 
-        int countByENUM = studentService.queryStudentCountByENUM(examInfo.getENum());
-        examInfo.setEPeople(countByENUM);
-        session.setAttribute("examInfo", examInfo);
+        }
+        int countByEID = studentService.queryStudentCountByEID(examInfo.getEID());
+        examInfo.setEPeople(countByEID);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("eID",examInfo.getEID());
+        map.put("ePeople",countByEID);
+        examInfoService.updateExamInfoByENUM(map);
+        ExamInfo examInfoByDB = examInfoService.queryExamInfoByENum(examInfo.getENum());
+        session.setAttribute("examInfo", examInfoByDB);
 
         List<Question> singleOpt = new ArrayList<Question>();
         List<Question> multipleOpt = new ArrayList<Question>();
@@ -114,7 +120,7 @@ public class ExamController {
             Question singleQuestion = new Question();
             Question multipleQuestion = new Question();
             List<Object> lo = examListByExcel.get(i);
-            if(String.valueOf(lo.get(0)).equals("单选题")){
+            if (String.valueOf(lo.get(0)).equals("单选题")) {
                 singleQuestion.setQType(String.valueOf(lo.get(0)));
                 singleQuestion.setQNum(String.valueOf(lo.get(1)));
                 singleQuestion.setQTitle(String.valueOf(lo.get(2)));
@@ -125,8 +131,8 @@ public class ExamController {
                 singleQuestion.setQAnswer(String.valueOf(lo.get(7)));
                 singleQuestion.setQScore(String.valueOf(lo.get(8)));
                 singleOpt.add(singleQuestion);
-                session.setAttribute("singleOptList",singleOpt);
-            }else if(String.valueOf(lo.get(0)).equals("多选题")){
+                session.setAttribute("singleOptList", singleOpt);
+            } else if (String.valueOf(lo.get(0)).equals("多选题")) {
                 multipleQuestion.setQType(String.valueOf(lo.get(0)));
                 multipleQuestion.setQNum(String.valueOf(lo.get(1)));
                 multipleQuestion.setQTitle(String.valueOf(lo.get(2)));
@@ -137,9 +143,13 @@ public class ExamController {
                 multipleQuestion.setQAnswer(String.valueOf(lo.get(7)));
                 multipleQuestion.setQScore(String.valueOf(lo.get(8)));
                 multipleOpt.add(multipleQuestion);
-                session.setAttribute("multipleOptList",multipleOpt);
+                session.setAttribute("multipleOptList", multipleOpt);
             }
         }
+        List<Question> allList = new ArrayList<Question>();
+        allList.addAll(singleOpt);
+        allList.addAll(multipleOpt);
+        session.setAttribute("allQuestion", allList);
 
 
         return "examManage";
@@ -165,9 +175,31 @@ public class ExamController {
     }
 
     @RequestMapping("viewPaper")
-    public String viewPaper(){
-
+    public String viewPaper() {
         return "viewPaper";
+    }
+
+    @RequestMapping("stuInfo")
+    @ResponseBody
+    public String stuInfo(HttpSession session,int page, int limit){
+        ExamInfo examInfo = (ExamInfo) session.getAttribute("examInfo");
+        List<Student> students = examInfoService.queryAllStuByEID(examInfo.getEID(),page,limit);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code",0);
+        jsonObject.put("msg", "stuTable-ok");
+        jsonObject.put("count", "10");
+        jsonObject.put("data", students);
+        return jsonObject.toString();
+    }
+
+    @RequestMapping("viewStu")
+    public String viewStu() {
+        return "viewStu";
+    }
+
+    @RequestMapping("invigilator")
+    public String invigilator(){
+        return "invigilator";
     }
 
 
