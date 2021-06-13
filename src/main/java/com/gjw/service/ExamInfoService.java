@@ -29,4 +29,6 @@ public interface ExamInfoService {
 
     ExamInfo queryExamInfoByENum(String eNum);
 
+    List<ExamInfo> queryAllEName();
+
 }

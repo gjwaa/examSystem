@@ -33,4 +33,6 @@ public interface ExamInfoMapper {
 
     ExamInfo queryExamInfoByENum(String eNum);
 
+    List<ExamInfo> queryAllEName();
+
 }

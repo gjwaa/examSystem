@@ -23,28 +23,27 @@
         $(function () {
             queryAll(1, 2);
         });
-
-        function queryAll(pageNum, pageSize) {
-            $.ajax({
-                type: 'POST',
-                url: "[[@{/newsInfoController/queryAll}]]", // ajax请求路径
+        function queryAll(page, limit) {
+            $.post({
+                url: "${pageContext.request.contextPath}/exam/stuInfo",
                 async: false,
                 dataType: 'json',
                 data: {
-                    "pageNum": pageNum,
-                    "pageSize": pageSize
+                    "limit": limit,
+                    "page": (page-1)*limit
                 },
                 success: function (data) {
+                    console.log(data)
                     var res = data;
-                    newsNum = res.data.length;
+                    stuNum = res.data.length;
                     count = res.count;
                     layui.use('laypage', function () {
                         var laypage = layui.laypage;
                         laypage.render({
                             elem: 'page' //注意，这里的 test1 是 ID，不用加 # 号
                             , count: count //数据总数，从服务端得到
-                            , limit: pageSize                     //每页显示条数
-                            , curr: pageNum //获取起始页
+                            , limit: limit                     //每页显示条数
+                            , curr: page //获取起始页
                             //跳转页码时调用
                             , jump: function (obj, first) { //obj为当前页的属性和方法，第一次加载first为true
                                 //非首次加载 do something
@@ -54,12 +53,12 @@
                                 }
                             }
                         });
-                        $("#news").children().remove();
-                        for (let i = 0; i < newsNum; i++) {
-
-                            var div = '';
-                            $("#news").append(div);
-
+                        $("#stuList").children().remove();
+                        for (let i = 0; i < stuNum; i++) {
+                            var div = '<div class="layui-inline" style="border: #eee 1px solid;margin: 20px 50px">' + '<input type="checkbox" name="" value="" lay-skin="primary"><br>'
+                                + '<label>准考证号：'+res.data[i].aNumber+'</label><br>' + '<label>姓名：'+res.data[i].sName+'</label><br>'
+                                + '<label>状态：</label>' + '<label>等待考试</label><br>' + '<label>成绩：</label>' + '<label>无</label>' + '</div>';
+                            $("#stuList").append(div);
 
                         }
                     })
@@ -128,6 +127,8 @@
                         <%--                            </div>--%>
                         <%--                        </c:forEach>--%>
                         <div id="stuList" class="layui-inline" style="border: #eee 1px solid;margin: 20px 50px"></div>
+
+                        <div id="page"></div>
 
                     </div>
                 </fieldset>

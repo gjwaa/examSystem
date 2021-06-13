@@ -71,6 +71,10 @@
         </association>
     </resultMap>
 
+    <select id="queryAllEName" resultType="java.lang.String">
+        select eName
+        from examinfo
+    </select>
 
 
 </mapper>

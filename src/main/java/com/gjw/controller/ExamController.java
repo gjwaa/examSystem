@@ -184,10 +184,11 @@ public class ExamController {
     public String stuInfo(HttpSession session, int page, int limit) {
         ExamInfo examInfo = (ExamInfo) session.getAttribute("examInfo");
         List<Student> students = examInfoService.queryAllStuByEIDLimit(examInfo.getEID(), page, limit);
+        int count = examInfoService.queryAllStuByEID(examInfo.getEID()).size();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("code", 0);
         jsonObject.put("msg", "stuTable-ok");
-        jsonObject.put("count", "10");
+        jsonObject.put("count", count);
         jsonObject.put("data", students);
         return jsonObject.toString();
     }
@@ -199,9 +200,7 @@ public class ExamController {
 
     @RequestMapping("invigilator")
     public String invigilator(HttpSession session) {
-        ExamInfo examInfo = (ExamInfo) session.getAttribute("examInfo");
-        List<Student> stuList = examInfoService.queryAllStuByEID(examInfo.getEID());
-        session.setAttribute("stuList",stuList);
+
         return "invigilator";
     }
 

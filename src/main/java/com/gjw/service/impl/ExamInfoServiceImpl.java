@@ -59,4 +59,9 @@ public class ExamInfoServiceImpl implements ExamInfoService {
     public ExamInfo queryExamInfoByENum(String eNum) {
         return examInfoMapper.queryExamInfoByENum(eNum);
     }
+
+    @Override
+    public List<ExamInfo> queryAllEName() {
+        return examInfoMapper.queryAllEName();
+    }
 }
