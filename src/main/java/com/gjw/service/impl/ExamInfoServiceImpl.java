@@ -36,8 +36,13 @@ public class ExamInfoServiceImpl implements ExamInfoService {
     }
 
     @Override
-    public List<Student> queryAllStuByEID(int eID,int page,int limit) {
-        return examInfoMapper.queryAllStuByEID(eID,page,limit);
+    public List<Student> queryAllStuByEIDLimit(int eID,int page,int limit) {
+        return examInfoMapper.queryAllStuByEIDLimit(eID,page,limit);
+    }
+
+    @Override
+    public List<Student> queryAllStuByEID(int eID) {
+        return examInfoMapper.queryAllStuByEID(eID);
     }
 
     @Override

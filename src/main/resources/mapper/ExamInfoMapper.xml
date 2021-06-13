@@ -29,7 +29,7 @@
         where eNum=#{eNum}
     </delete>
 
-    <select id="queryAllStuByEID" resultMap="stuVo">
+    <select id="queryAllStuByEIDLimit" resultMap="stuVo">
         SELECT s.sName,s.IDCard,s.aNumber,e.eName,e.eLevel
         FROM student s,examinfo e
         WHERE s.eID = e.eID
@@ -55,6 +55,21 @@
         select *
         from examinfo where eNum=#{eNum}
     </select>
+
+    <select id="queryAllStuByEID" resultMap="vo">
+        SELECT s.sName,s.IDCard,s.aNumber,e.eName,e.eLevel
+        FROM student s,examinfo e
+        WHERE s.eID = e.eID
+    </select>
+    <resultMap id="vo" type="Student">
+        <result column="sName" property="sName"/>
+        <result column="IDCard" property="IDCard"/>
+        <result column="aNumber" property="aNumber"/>
+        <association property="examInfo" javaType="ExamInfo">
+            <result column="eName" property="eName"/>
+            <result column="eLevel" property="eLevel"/>
+        </association>
+    </resultMap>
 
 
 

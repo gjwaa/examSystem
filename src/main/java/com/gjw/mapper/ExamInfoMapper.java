@@ -23,7 +23,9 @@ public interface ExamInfoMapper {
 
     int insertExamInfo(ExamInfo examInfo);
 
-    List<Student> queryAllStuByEID(@Param("eID") int eID,@Param("page") int page,@Param("limit") int limit);
+    List<Student> queryAllStuByEIDLimit(@Param("eID") int eID,@Param("page") int page,@Param("limit") int limit);
+
+    List<Student> queryAllStuByEID(int eID);
 
     int delExamInfoByENUM(String eNum);
 

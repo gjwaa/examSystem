@@ -19,7 +19,9 @@ public interface ExamInfoService {
 
     int insertExamInfo(ExamInfo examInfo);
 
-    List<Student> queryAllStuByEID(int eID,int page,int limit);
+    List<Student> queryAllStuByEIDLimit(int eID,int page,int limit);
+
+    List<Student> queryAllStuByEID(int eID);
 
     int delExamInfoByENUM(String eNum);
 
