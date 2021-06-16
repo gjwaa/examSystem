@@ -66,7 +66,48 @@
             });
         }
     </script>
+    <script>
+        var host = window.location.host;
+        var webSocket =
+            new WebSocket("ws://" + host + "/ws?id="+Math.random());
+        var hum = null;
+        var s_json = null;
+        webSocket.onerror = function (event) {
+            onError(event);
+        };
+        webSocket.onopen = function (event) {
+            onOpen(event);
+        };
+        webSocket.onmessage = function (event) {
+            onMessage(event);
+        };
 
+        function onMessage(event) {
+            console.log(event.data);
+            alert(event.data)
+        }
+
+        function onOpen(event) {
+            console.log("握手成功");
+            // webSocket.send("连接上了");
+        }
+
+        function onError(event) {
+            // alert(event.data);
+            alert("wrong")
+        }
+
+        function sendMsg(){
+            webSocket.send("开始考试");
+        }
+
+        $(function (){
+            $("#startExam").click(function (){
+                sendMsg();
+            });
+        })
+
+    </script>
 </head>
 <body>
 
@@ -115,17 +156,6 @@
                 <fieldset class="layui-elem-field" style="margin-top: 30px;">
                     <legend>考生列表</legend>
                     <div class="layui-field-box">
-                        <%--                        <c:forEach items="${sessionScope.stuList}" var="stu" varStatus="i">--%>
-                        <%--                            <div class="layui-inline" style="border: #eee 1px solid;margin: 20px 50px">--%>
-                        <%--                                <input type="checkbox" name="" value="" lay-skin="primary"><br>--%>
-                        <%--                                <label>准考证号：${stu.getANumber()}</label><br>--%>
-                        <%--                                <label>姓名：${stu.getSName()}</label><br>--%>
-                        <%--                                <label>状态：</label>--%>
-                        <%--                                <label>等待考试</label><br>--%>
-                        <%--                                <label>成绩：</label>--%>
-                        <%--                                <label>无</label>--%>
-                        <%--                            </div>--%>
-                        <%--                        </c:forEach>--%>
                         <div id="stuList" class="layui-inline" style="border: #eee 1px solid;margin: 20px 50px"></div>
 
                         <div id="page"></div>

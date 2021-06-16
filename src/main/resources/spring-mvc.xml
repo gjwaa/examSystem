@@ -26,6 +26,7 @@
 
     <!-- 4.扫描web相关的bean -->
     <context:component-scan base-package="com.gjw.controller"/>
+    <context:component-scan base-package="com.gjw.websocket" />
 
     <!--拦截器配置-->
     <mvc:interceptors>

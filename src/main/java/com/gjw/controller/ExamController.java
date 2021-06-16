@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
@@ -198,9 +199,9 @@ public class ExamController {
         return "viewStu";
     }
 
-    @RequestMapping("invigilator")
-    public String invigilator(HttpSession session) {
-
+    @RequestMapping("invigilator")//监考
+    public String invigilator(HttpSession session, HttpServletRequest request) {
+        request.getSession().setAttribute("uid", "admin");
         return "invigilator";
     }
 
