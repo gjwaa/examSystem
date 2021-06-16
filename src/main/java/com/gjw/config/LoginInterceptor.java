@@ -33,7 +33,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         if (request.getRequestURI().contains("verify")) {
             return true;
         }
-
+        System.err.println("被拦截了");
         request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
         return false;
 

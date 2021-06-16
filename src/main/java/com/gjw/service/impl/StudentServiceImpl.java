@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -24,5 +25,10 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public int queryStudentCountByEID(int eID) {
         return studentMapper.queryStudentCountByEID(eID);
+    }
+
+    @Override
+    public Student checkLogin(Map map) {
+        return studentMapper.checkLogin(map);
     }
 }

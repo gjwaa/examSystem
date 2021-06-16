@@ -18,7 +18,7 @@
         $(function () {
             $.post({
                 url: '${pageContext.request.contextPath}/stuExam/getEName',
-                data: {},
+                data: {"getEName":'#'},
                 dataType: 'json',
                 success: function (res) {
                     console.log(res)
@@ -32,7 +32,7 @@
             layui.use('form', function() {
                 var form = layui.form;
                 form.on('select(eNameSel)', function (data) {
-                    selText = data.elem.selectedOptions[0].text;
+                     selText = data.elem.selectedOptions[0].text;
                 });
             });
 
@@ -57,12 +57,29 @@
             function checkIDCard(str) {
                 var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
                 return reg.test(str);
-            }
+            };
 
             function checkName(str){
                 var reg = /^[\u4e00-\u9fa5]{2,4}$/;
                 return reg.test(str);
-            }
+            };
+
+            $("#login").click(function (){
+                $.post({
+                    url:'${pageContext.request.contextPath}/stuExam/stuLogin',
+                    data:{
+                        "eName":selText,
+                        "aNumber":$("#aNUmber").val(),
+                        "IDCard":$("#IDCard").val(),
+                        "sName":$("#sName").val(),
+                    },
+                    dataType: 'text',
+                    success:function (res){
+                        if (res=='loginPass')
+                        $(location).attr("href","${pageContext.request.contextPath}/stuExam/waitExam")
+                    }
+                })
+            });
 
         })
     </script>
@@ -83,8 +100,7 @@
                         <legend>学生考试系统</legend>
                     </fieldset>
                     <div class="layui-container" style="width: 100%">
-                        <form class="layui-form layui-form-pane" action="${pageContext.request.contextPath}/"
-                              method="post" >
+                        <form class="layui-form layui-form-pane" action="" method="post" >
                             <div class="layui-form-item">
                                 <label class="layui-form-label">考试名称：</label>
                                 <div class="layui-input-inline">
@@ -126,9 +142,8 @@
 
                             <div class="layui-form-item">
                                 <div class="layui-container" style="width: 85%" ;>
-                                    <input type="submit" id="login"
-                                           class="layui-btn layui-btn-primary layui-border-green"
-                                           value="登录">
+                                    <input type="button" id="login"
+                                           class="layui-btn layui-btn-primary layui-border-green" value="登录">
                                 </div>
                             </div>
 

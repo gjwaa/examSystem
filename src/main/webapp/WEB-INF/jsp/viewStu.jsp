@@ -26,7 +26,7 @@
                 ,limits:[2,3,5]
                 ,method:'post'
                 , url: '${pageContext.request.contextPath}/exam/stuInfo'
-                , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                , cellMinWidth: 80
                 , cols: [[
                     {title: '序号', templet: '#stuId',width:'6%',align:'center'}
                     , {field: 'sName', title: '姓名',width:'10%', sort: true,align:'center'}

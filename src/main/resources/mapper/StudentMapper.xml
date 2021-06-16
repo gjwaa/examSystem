@@ -20,8 +20,31 @@
     </insert>
 
     <select id="queryStudentCountByEID" parameterType="int" resultType="int">
-        select count(*) from student where eID=#{eID}
+        select count(*)
+        from student
+        where eID = #{eID}
     </select>
+
+    <select id="checkLogin" parameterType="Map" resultMap="stuVo">
+        select s.aNumber, s.sName, s.IDCard, e.eWork, e.eLevel, e.courseID, e.courseName
+        from examinfo e,
+             student s
+        where e.eName = #{eName}
+          and s.aNumber = #{aNumber}
+          and s.IDCard = #{IDCard}
+          and s.sName = #{sName}
+    </select>
+    <resultMap id="stuVo" type="Student">
+        <result column="aNumber" property="aNumber"/>
+        <result column="sName" property="sName"/>
+        <result column="IDCard" property="IDCard"/>
+        <association property="examInfo" javaType="ExamInfo">
+            <result column="eWork" property="eWork"/>
+            <result column="eLevel" property="eLevel"/>
+            <result column="courseID" property="courseID"/>
+            <result column="courseName" property="courseName"/>
+        </association>
+    </resultMap>
 
 
 </mapper>
