@@ -97,13 +97,23 @@
             alert("wrong")
         }
 
-        function sendMsg(){
-            webSocket.send("开始考试");
+        function startExam(){
+            webSocket.send("startExam");
         }
 
         $(function (){
             $("#startExam").click(function (){
-                sendMsg();
+                $.post({
+                   url:"${pageContext.request.contextPath}/exam/startExam",
+                   dataType: "text",
+                   success:function (res){
+
+                       if (res=='start'){
+                           startExam();
+                       }
+
+                   }
+                });
             });
         })
 

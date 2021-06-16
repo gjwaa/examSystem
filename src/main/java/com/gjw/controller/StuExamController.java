@@ -5,11 +5,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.gjw.bean.ExamInfo;
 import com.gjw.bean.Student;
 import com.gjw.service.ExamInfoService;
+import com.gjw.service.RecordService;
 import com.gjw.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -35,6 +37,10 @@ public class StuExamController {
     @Qualifier("studentServiceImpl")
     private StudentService studentService;
 
+    @Autowired
+    @Qualifier("recordServiceImpl")
+    private RecordService recordService;
+
     @RequestMapping("/login")
     public String login() {
         return "/stu/stuLogin";
@@ -58,19 +64,31 @@ public class StuExamController {
         map.put("IDCard", IDCard);
         map.put("sName", sName);
         Student student = studentService.checkLogin(map);
+        JSONObject jsonObject = new JSONObject();
         if (student != null) {
             session.setAttribute("stuCheckInfo", student);
             System.err.println(student);
             System.out.println("=======================================");
-            out.print("loginPass");
+            String state = recordService.queryStateByEID(student.getEID());
+            if (state.equals("考试中")){
+                jsonObject.put("login","true");
+                jsonObject.put("examIng","true");
+                out.print(jsonObject);
+            }else {
+                jsonObject.put("login","true");
+                jsonObject.put("examIng","false");
+                out.print(jsonObject);
+            }
         } else {
-            out.print("loginUnPass");
+            jsonObject.put("login","false");
+            out.print(jsonObject);
         }
 
     }
 
-    @RequestMapping("waitExam")
-    public String waitExam() {
+    @RequestMapping("waitExam/{id}")
+    public String waitExam(HttpServletRequest request, @PathVariable("id") int id) {
+        request.getSession().setAttribute("uid", id);
         return "stu/waitExam";
     }
 
@@ -87,5 +105,8 @@ public class StuExamController {
         jsonObject.put("data", list);
         return jsonObject.toString();
     }
+
+
+
 
 }

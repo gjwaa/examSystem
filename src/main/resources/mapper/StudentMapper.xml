@@ -26,7 +26,7 @@
     </select>
 
     <select id="checkLogin" parameterType="Map" resultMap="stuVo">
-        select s.aNumber, s.sName, s.IDCard, e.eWork, e.eLevel, e.courseID, e.courseName
+        select s.eID,s.aNumber, s.sName, s.IDCard, e.eWork, e.eLevel, e.courseID, e.courseName
         from examinfo e,
              student s
         where e.eName = #{eName}
@@ -35,6 +35,7 @@
           and s.sName = #{sName}
     </select>
     <resultMap id="stuVo" type="Student">
+        <result column="eID" property="eID"/>
         <result column="aNumber" property="aNumber"/>
         <result column="sName" property="sName"/>
         <result column="IDCard" property="IDCard"/>

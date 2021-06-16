@@ -59,7 +59,7 @@
                 return reg.test(str);
             };
 
-            function checkName(str){
+            function checkName(str){键
                 var reg = /^[\u4e00-\u9fa5]{2,4}$/;
                 return reg.test(str);
             };
@@ -73,10 +73,16 @@
                         "IDCard":$("#IDCard").val(),
                         "sName":$("#sName").val(),
                     },
-                    dataType: 'text',
+                    dataType: 'json',
                     success:function (res){
-                        if (res=='loginPass')
-                        $(location).attr("href","${pageContext.request.contextPath}/stuExam/waitExam")
+                        if (res.login=='true'&&res.examIng=='true'){
+                            <%session.setAttribute("state","startExam");%>
+                            $(location).attr("href","${pageContext.request.contextPath}/stuExam/waitExam/1")
+                        }else if (res.login=='true'&&res.examIng=='false'){
+                            <%session.setAttribute("state","noStart");%>
+                            $(location).attr("href","${pageContext.request.contextPath}/stuExam/waitExam/1")
+                        }
+
                     }
                 })
             });
@@ -116,7 +122,7 @@
                                     <input type="text" id="aNUmber" name="aNUmber" placeholder="请输入准考证号"
                                            autocomplete="off"
                                            class="layui-input" oninput="value=value.replace(/[\W]/g,'')"
-                                           style="ime-mode:inactive" required>
+                                           style="ime-mode:inactive" required value="100001">
                                 </div>
                             </div>
 
@@ -126,7 +132,7 @@
                                     <input type="text" id="IDCard" name="IDCard" placeholder="请输入身份证号"
                                            autocomplete="off"
                                            class="layui-input" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')"
-                                           style="ime-mode:inactive" required>
+                                           style="ime-mode:inactive" required value="350301199201010010">
                                 </div>
                             </div>
 
@@ -134,7 +140,7 @@
                                 <label class="layui-form-label">姓名：</label>
                                 <div class="layui-input-inline">
                                     <input type="text" id="sName" name="eName" placeholder="请输入姓名" autocomplete="off"
-                                           class="layui-input" style="ime-mode:inactive" required>
+                                           class="layui-input" style="ime-mode:inactive" required value="林怀杰">
                                 </div>
                             </div>
 

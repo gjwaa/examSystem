@@ -34,10 +34,19 @@ public class MyWebSocketHandler implements WebSocketHandler {
         String uid = session.getAttributes().get("uid").toString();
 
         // 绑定session
-        if (userSocketSessionMap.get(uid) == null&& !uid.equals("admin")) {
+        if (userSocketSessionMap.get(uid) == null) {
             userSocketSessionMap.put(uid, session);
         }
-        session.sendMessage(new TextMessage("handler已连接"));
+//        try {
+//            if (session.getAttributes().get("state").toString().equals("startExam")){
+//                session.sendMessage(new TextMessage("startExam"));
+//            }
+//        }catch (NullPointerException e){
+//            System.out.println("为空");
+//        }
+//        String state = session.getAttributes().get("state").toString();
+//        System.err.println(state);
+//        session.sendMessage(new TextMessage("startExam"));
 
     }
 

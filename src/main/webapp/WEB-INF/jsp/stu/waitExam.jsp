@@ -24,23 +24,33 @@
                 , url: '${pageContext.request.contextPath}/stuExam/infoTable'
                 , cellMinWidth: 80
                 , cols: [[
-                    {field: 'aNumber', title: '准考证号', sort: true ,align:'center'}
-                    , {field: 'sName', title: '考生姓名',align:'center'}
-                    , {field: 'IDCard', title: '身份证号',align:'center',templet:function (Student) {
+                    {field: 'aNumber', title: '准考证号', sort: true, align: 'center'}
+                    , {field: 'sName', title: '考生姓名', align: 'center'}
+                    , {
+                        field: 'IDCard', title: '身份证号', align: 'center', templet: function (Student) {
                             return Student.iDCard;
-                        }}
-                    , {field: 'courseID', title: '考试科目代码',align:'center',templet:function (ExamInfo) {
+                        }
+                    }
+                    , {
+                        field: 'courseID', title: '考试科目代码', align: 'center', templet: function (ExamInfo) {
                             return ExamInfo.examInfo.courseID;
-                        }}
-                    , {field: 'courseName', title: '考试科目名称',align:'center',templet:function (ExamInfo) {
+                        }
+                    }
+                    , {
+                        field: 'courseName', title: '考试科目名称', align: 'center', templet: function (ExamInfo) {
                             return ExamInfo.examInfo.courseName;
-                        }}
-                    , {field: 'eWork', title: '考试工种',align:'center',templet:function (ExamInfo) {
+                        }
+                    }
+                    , {
+                        field: 'eWork', title: '考试工种', align: 'center', templet: function (ExamInfo) {
                             return ExamInfo.examInfo.eWork;
-                        }}
-                    , {field: 'eLevel', title: '考试等级',align:'center',templet:function (ExamInfo) {
+                        }
+                    }
+                    , {
+                        field: 'eLevel', title: '考试等级', align: 'center', templet: function (ExamInfo) {
                             return ExamInfo.examInfo.eLevel;
-                        }}
+                        }
+                    }
                 ]]
                 , parseData: function (res) {
                     console.log(res.data)
@@ -53,6 +63,44 @@
                 }
             });
         });
+
+
+        var host = window.location.host;
+        var webSocket =
+            new WebSocket("ws://" + host + "/ws?id=" + Math.random());
+        var hum = null;
+        var s_json = null;
+        webSocket.onerror = function (event) {
+            onError(event);
+        };
+        webSocket.onopen = function (event) {
+            onOpen(event);
+        };
+        webSocket.onmessage = function (event) {
+            onMessage(event);
+        };
+
+        function onMessage(event) {
+            // alert(event.data)
+            if (event.data=='startExam'){
+                $("#examBtn").attr("class","layui-btn");
+            }
+
+        }
+
+        function onOpen(event) {
+            console.log("握手成功");
+            // webSocket.send("连接上了");
+        }
+
+        function onError(event) {
+            // alert(event.data);
+            alert("wrong")
+        }
+
+
+
+
     </script>
 
 </head>
@@ -71,7 +119,18 @@
             <label>。。。</label>
         </div>
     </fieldset>
-    <div style="text-align: center"><button class="layui-btn layui-btn-disabled">等待考试</button></div>
+    <div style="text-align: center">
+       <c:choose>
+           <c:when test="${sessionScope.get('state')=='startExam'}">
+               <button class="layui-btn" id="examBtn">进入考试</button>
+           </c:when>
+           <c:otherwise>
+               <button class="layui-btn layui-btn-disabled" id="examBtn">等待考试</button>
+           </c:otherwise>
+       </c:choose>
+
+
+    </div>
 
 
 </div>

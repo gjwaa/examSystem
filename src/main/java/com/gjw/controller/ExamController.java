@@ -7,6 +7,7 @@ import com.gjw.bean.Question;
 import com.gjw.bean.Student;
 import com.gjw.bean.TableData;
 import com.gjw.service.ExamInfoService;
+import com.gjw.service.RecordService;
 import com.gjw.service.StudentService;
 import com.gjw.utils.ExcelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +47,10 @@ public class ExamController {
     @Autowired
     @Qualifier("examInfoServiceImpl")
     private ExamInfoService examInfoService;
+
+    @Autowired
+    @Qualifier("recordServiceImpl")
+    private RecordService recordService;
 
 
     @RequestMapping("/showInfo")
@@ -79,6 +86,7 @@ public class ExamController {
 
         if (count <= 0) {
             examInfoService.insertExamInfo(examInfo);
+            recordService.insertEID(examInfo.getEID());
             System.err.println(examListByExcel);
 
             System.out.println("=================================================");
@@ -203,6 +211,20 @@ public class ExamController {
     public String invigilator(HttpSession session, HttpServletRequest request) {
         request.getSession().setAttribute("uid", "admin");
         return "invigilator";
+    }
+
+    @RequestMapping("startExam")
+    public void startExam(HttpSession session, HttpServletResponse response,HttpServletRequest request) throws IOException {
+        response.setContentType("text/text;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
+        ExamInfo examInfo = (ExamInfo) session.getAttribute("examInfo");
+        Map map = new HashMap();
+        map.put("eID", examInfo.getEID());
+        map.put("state", "考试中");
+//        request.getSession().setAttribute("state","startExam");
+        recordService.updateRecordStateByEID(map);
+//        session.setAttribute("uid", "admin");
+        response.getWriter().print("start");
     }
 
 

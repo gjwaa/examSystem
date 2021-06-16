@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gjw.mapper.RecordMapper">
+
+    <insert id="insertEID" parameterType="int">
+        insert into record (eID)
+        values (#{eID})
+    </insert>
+
+    <update id="updateRecordStateByEID" parameterType="Map">
+        update record
+        set state = #{state}
+        where eID = #{eID}
+    </update>
+
+    <select id="queryStateByEID" parameterType="int" resultType="String">
+        select state
+        from record
+        where eID=#{eID}
+    </select>
+
+</mapper>
