@@ -28,4 +28,14 @@ public class RecordServiceImpl implements RecordService {
     public String queryStateByEID(int eID) {
         return recordMapper.queryStateByEID(eID);
     }
+
+    @Override
+    public String queryRestTimeByEID(int eID) {
+        return recordMapper.queryRestTimeByEID(eID);
+    }
+
+    @Override
+    public int updateRestTimeByEID(int eID, int restTime) {
+        return recordMapper.updateRestTimeByEID(eID, restTime);
+    }
 }

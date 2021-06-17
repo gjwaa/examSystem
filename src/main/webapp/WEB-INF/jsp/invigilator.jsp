@@ -23,6 +23,7 @@
         $(function () {
             queryAll(1, 2);
         });
+
         function queryAll(page, limit) {
             $.post({
                 url: "${pageContext.request.contextPath}/exam/stuInfo",
@@ -30,7 +31,7 @@
                 dataType: 'json',
                 data: {
                     "limit": limit,
-                    "page": (page-1)*limit
+                    "page": (page - 1) * limit
                 },
                 success: function (data) {
                     console.log(data)
@@ -56,7 +57,7 @@
                         $("#stuList").children().remove();
                         for (let i = 0; i < stuNum; i++) {
                             var div = '<div class="layui-inline" style="border: #eee 1px solid;margin: 20px 50px">' + '<input type="checkbox" name="" value="" lay-skin="primary"><br>'
-                                + '<label>准考证号：'+res.data[i].aNumber+'</label><br>' + '<label>姓名：'+res.data[i].sName+'</label><br>'
+                                + '<label>准考证号：' + res.data[i].aNumber + '</label><br>' + '<label>姓名：' + res.data[i].sName + '</label><br>'
                                 + '<label>状态：</label>' + '<label>等待考试</label><br>' + '<label>成绩：</label>' + '<label>无</label>' + '</div>';
                             $("#stuList").append(div);
 
@@ -69,7 +70,7 @@
     <script>
         var host = window.location.host;
         var webSocket =
-            new WebSocket("ws://" + host + "/ws?id="+Math.random());
+            new WebSocket("ws://" + host + "/ws?id=" + Math.random());
         var hum = null;
         var s_json = null;
         webSocket.onerror = function (event) {
@@ -97,25 +98,91 @@
             alert("wrong")
         }
 
-        function startExam(){
+        function startExam() {
             webSocket.send("startExam");
         }
 
-        $(function (){
-            $("#startExam").click(function (){
+        $(function () {
+
+            $.post({
+                url: "${pageContext.request.contextPath}/exam/checkExamState",
+                data: {
+                    eID: "${sessionScope.get("examInfo").getEID()}"
+                },
+                dataType: "text",
+                success: function (res) {
+                    //如果已经开始状态，禁按钮...未做
+                    $("#stateLabel").text('考试状态：' + res);
+                }
+            });
+
+            $("#startExam").click(function () {
                 $.post({
-                   url:"${pageContext.request.contextPath}/exam/startExam",
-                   dataType: "text",
-                   success:function (res){
-
-                       if (res=='start'){
-                           startExam();
-                       }
-
-                   }
+                    url: "${pageContext.request.contextPath}/exam/startExam",
+                    dataType: "text",
+                    success: function (res) {
+                        if (res == 'start') {
+                            startExam();
+                            $("#stateLabel").text('考试状态：考试中');
+                            getTime();
+                        }
+                    }
                 });
             });
-        })
+
+            function getTime() {
+                $.post({
+                    url: "${pageContext.request.contextPath}/exam/getRestTime",
+                    data: {
+                        eID: "${sessionScope.get("examInfo").getEID()}"
+                    },
+                    dataType: "text",
+                    success: function (res) {
+                        countDown(res)
+                    }
+                });
+            };
+
+            function countDown(times) {
+                var timer = null;
+                timer = setInterval(function () {
+                    var hour = 0,
+                        minute = 0,
+                        second = 0;
+                    if (times > 0) {
+                        hour = Math.floor(times / (60 * 60));
+                        minute = Math.floor(times / 60) - (hour * 60);
+                        second = Math.floor(times) - (hour * 60 * 60) - (minute * 60);
+                    }
+                    if (hour <= 9) hour = '0' + hour;
+                    if (minute <= 9) minute = '0' + minute;
+                    if (second <= 9) second = '0' + second;
+                    setRestTime(hour * 60 * 60 + minute * 60 + second);
+                    $("#timeDown").text(hour + "小时：" + minute + "分钟：" + second + "秒")
+                    times--;
+                }, 1000);
+                if (times <= 0) {
+                    clearInterval(timer);
+                }
+            };
+
+
+            function setRestTime(time) {
+                $.post({
+                    url: "${pageContext.request.contextPath}/exam/setRestTime",
+                    data: {
+                        restTime: time,
+                        eID: "${sessionScope.get("examInfo").getEID()}"
+                    },
+                    dataType: "text",
+                    success: function (res) {
+                        console.log(res)
+                    }
+                });
+            }
+
+        });
+
 
     </script>
 </head>
@@ -130,9 +197,9 @@
                 <fieldset class="layui-elem-field" style="margin-top: 30px;">
                     <legend>监考操作</legend>
                     <div class="layui-field-box">
-                        <label>考试状态：</label><br><br>
+                        <label id="stateLabel">考试状态：</label><br><br>
                         <label>等待倒计时：</label><br><br>
-                        <label>99999</label><br><br>
+                        <label id="timeDown">99999</label><br><br>
                         <button type="button" class="layui-btn" id="startExam">开始考试</button>
                         <br><br>
                         <button type="button" class="layui-btn" id="compulsorySubmit">强制交卷</button>

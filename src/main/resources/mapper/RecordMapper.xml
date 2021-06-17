@@ -21,4 +21,15 @@
         where eID=#{eID}
     </select>
 
+    <select id="queryRestTimeByEID" parameterType="int" resultType="String">
+        select restTime
+        from record where eID = #{eID}
+    </select>
+
+    <update id="updateRestTimeByEID">
+        update record
+        set restTime = #{restTime}
+        where eID = #{eID}
+    </update>
+
 </mapper>

@@ -82,8 +82,9 @@
 
         function onMessage(event) {
             // alert(event.data)
-            if (event.data=='startExam'){
-                $("#examBtn").attr("class","layui-btn");
+            if (event.data == 'startExam') {
+                $("#examBtn").attr("class", "layui-btn").removeAttr("disabled");
+                $("#examBtn").text("进入考试")
             }
 
         }
@@ -98,9 +99,28 @@
             alert("wrong")
         }
 
+        $(function () {
+            $.post({
+                url: '${pageContext.request.contextPath}/stuExam/checkState',
+                dataType: 'text',
+                success: function (res) {
+                    if (res == 'start') {
+                        $("#examBtn").attr("class", "layui-btn").removeAttr("disabled");
+
+                        $("#examBtn").text("进入考试")
+                    }
+
+                }
+            });
+
+            $("#examBtn").click(function () {
+                $(location).attr("href", "${pageContext.request.contextPath}/exam/paper")
+            });
 
 
+        })
 
+        $("#examBtn").attr("disable", true);
     </script>
 
 </head>
@@ -120,15 +140,8 @@
         </div>
     </fieldset>
     <div style="text-align: center">
-       <c:choose>
-           <c:when test="${sessionScope.get('state')=='startExam'}">
-               <button class="layui-btn" id="examBtn">进入考试</button>
-           </c:when>
-           <c:otherwise>
-               <button class="layui-btn layui-btn-disabled" id="examBtn">等待考试</button>
-           </c:otherwise>
-       </c:choose>
 
+        <button class="layui-btn layui-btn-disabled" id="examBtn" disabled="disabled">等待考试</button>
 
     </div>
 

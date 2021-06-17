@@ -59,7 +59,7 @@
                 return reg.test(str);
             };
 
-            function checkName(str){键
+            function checkName(str){
                 var reg = /^[\u4e00-\u9fa5]{2,4}$/;
                 return reg.test(str);
             };
@@ -75,12 +75,10 @@
                     },
                     dataType: 'json',
                     success:function (res){
-                        if (res.login=='true'&&res.examIng=='true'){
-                            <%session.setAttribute("state","startExam");%>
+                        if(res.login=='true'){
                             $(location).attr("href","${pageContext.request.contextPath}/stuExam/waitExam/1")
-                        }else if (res.login=='true'&&res.examIng=='false'){
-                            <%session.setAttribute("state","noStart");%>
-                            $(location).attr("href","${pageContext.request.contextPath}/stuExam/waitExam/1")
+                        }else if(res.login=='false'){
+                            alert("信息有误")
                         }
 
                     }

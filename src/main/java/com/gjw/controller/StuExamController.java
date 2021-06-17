@@ -69,26 +69,19 @@ public class StuExamController {
             session.setAttribute("stuCheckInfo", student);
             System.err.println(student);
             System.out.println("=======================================");
-            String state = recordService.queryStateByEID(student.getEID());
-            if (state.equals("考试中")){
-                jsonObject.put("login","true");
-                jsonObject.put("examIng","true");
-                out.print(jsonObject);
-            }else {
-                jsonObject.put("login","true");
-                jsonObject.put("examIng","false");
-                out.print(jsonObject);
-            }
+            jsonObject.put("login", "true");
+            out.print(jsonObject);
         } else {
-            jsonObject.put("login","false");
+            jsonObject.put("login", "false");
             out.print(jsonObject);
         }
 
     }
 
     @RequestMapping("waitExam/{id}")
-    public String waitExam(HttpServletRequest request, @PathVariable("id") int id) {
+    public String waitExam(HttpServletRequest request, HttpSession session, @PathVariable("id") int id) {
         request.getSession().setAttribute("uid", id);
+
         return "stu/waitExam";
     }
 
@@ -106,7 +99,19 @@ public class StuExamController {
         return jsonObject.toString();
     }
 
+    @RequestMapping("checkState")
+    public void checkState(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
+        response.setContentType("text/text;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
+        Student student = (Student) session.getAttribute("stuCheckInfo");
+        String state = recordService.queryStateByEID(student.getEID());
+        if (state.equals("考试中")) {
+            response.getWriter().print("start");
+        } else {
+            response.getWriter().print("noStart");
+        }
 
+    }
 
 
 }

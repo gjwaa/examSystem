@@ -1,5 +1,7 @@
 package com.gjw.service;
 
+import org.apache.ibatis.annotations.Param;
+
 import java.util.Map;
 
 public interface RecordService {
@@ -9,5 +11,9 @@ public interface RecordService {
     int updateRecordStateByEID(Map map);
 
     String queryStateByEID(int eID);
+
+    String queryRestTimeByEID(int eID);
+
+    int updateRestTimeByEID(int eID,int restTime);
 
 }

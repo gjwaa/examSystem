@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * @version 1.0
@@ -214,7 +215,7 @@ public class ExamController {
     }
 
     @RequestMapping("startExam")
-    public void startExam(HttpSession session, HttpServletResponse response,HttpServletRequest request) throws IOException {
+    public void startExam(HttpSession session, HttpServletResponse response, HttpServletRequest request) throws IOException {
         response.setContentType("text/text;charset=utf-8");
         response.setCharacterEncoding("UTF-8");
         ExamInfo examInfo = (ExamInfo) session.getAttribute("examInfo");
@@ -225,6 +226,43 @@ public class ExamController {
         recordService.updateRecordStateByEID(map);
 //        session.setAttribute("uid", "admin");
         response.getWriter().print("start");
+    }
+
+    @RequestMapping("checkExamState")
+    public void checkExamState(HttpServletResponse response, int eID) throws IOException {
+        response.setContentType("text/text;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
+        String state = recordService.queryStateByEID(eID);
+        response.getWriter().print(state);
+    }
+
+    @RequestMapping("getRestTime")
+    public void getRestTime(HttpServletResponse response, HttpSession session, int eID) throws IOException {
+        response.setContentType("text/text;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
+        ExamInfo examInfo = (ExamInfo) session.getAttribute("examInfo");
+        String restTime = recordService.queryRestTimeByEID(eID);
+        String REGEX = "[^(0-9)]";
+        String time = Pattern.compile(REGEX).matcher(examInfo.getETime()).replaceAll("").trim();
+        if (restTime == null) {
+            response.getWriter().print(Integer.valueOf(time) * 60);
+        }else {
+            response.getWriter().print(restTime);
+        }
+    }
+
+    @RequestMapping("setRestTime")
+    public void setRestTime(HttpServletResponse response, HttpSession session, int eID,int restTime) throws IOException {
+        response.setContentType("text/text;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
+        recordService.updateRestTimeByEID(eID, restTime);
+        response.getWriter().print("ok");
+
+    }
+
+    @RequestMapping("paper")
+    public String paper(){
+        return "viewPaper";
     }
 
 
