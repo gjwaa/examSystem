@@ -22,15 +22,54 @@
         }
     </style>
     <script>
-        $.post({
-            url: '${pageContext.request.contextPath}/exam/question',
-            data: {
-                eID:${sessionScope.get("stuCheckInfo").getEID()}
-            },
-            dataType: 'json',
-            success: function (res) {
+        $(function () {
+
+
+            $.post({
+                url: '${pageContext.request.contextPath}/exam/question',
+                data: {
+                    eID:${sessionScope.get("stuCheckInfo").getEID()}
+                },
+                dataType: 'json',
+                success: function (res) {
+
+                }
+            });
+
+            var host = window.location.host;
+            var webSocket =
+                new WebSocket("ws://" + host + "/ws?id=" + Math.random());
+            var hum = null;
+            var s_json = null;
+            webSocket.onerror = function (event) {
+                onError(event);
+            };
+            webSocket.onopen = function (event) {
+                onOpen(event);
+            };
+            webSocket.onmessage = function (event) {
+                onMessage(event);
+            };
+
+            function onMessage(event) {
+                var receiveMsg = JSON.parse(event.data)
+                if (receiveMsg.info == 'showTime') {
+                    // console.log(receiveMsg.timeData)
+                    $("#restTime").text(receiveMsg.timeData)
+                }
 
             }
+
+            function onOpen(event) {
+                console.log("握手成功");
+                // webSocket.send("连接上了");
+            }
+
+            function onError(event) {
+                // alert(event.data);
+                alert("wrong")
+            }
+
         })
     </script>
 </head>
@@ -45,8 +84,8 @@
                     <div class="layui-field-box">
                         <label>科目代码：${sessionScope.get("qExamInfo").getCourseID()}</label>
                         <label>科目名称：${sessionScope.get("qExamInfo").getCourseName()}</label>
-                        <label>准考证号：null</label>
-                        <label>考生姓名：null</label>
+                        <label>准考证号：${sessionScope.get("stuCheckInfo").getANumber()}</label>
+                        <label>考生姓名：${sessionScope.get("stuCheckInfo").getSName()}</label>
                     </div>
                 </fieldset>
                 <fieldset class="layui-elem-field" style="margin-top: 10px;">
@@ -100,7 +139,7 @@
                         <label>1、本试卷依据2005年颁布的《数控二手车》国家职业标准命制，考试时间120分钟</label><br>
                         <label>2、本试卷依据2005年颁布的《数控二手车》国家职业标准命制，考试时间120分钟</label><br>
                         <label>3、本试卷依据2005年颁布的《数控二手车》国家职业标准命制，考试时间120分钟</label><br>
-                        <label>剩余时间：2:00:00</label><br>
+                        <label id="restTime">剩余时间：2:00:00</label><br>
                         <label>题目导航栏</label><br>
                         <div class="layui-form">
                             <table class="layui-table">

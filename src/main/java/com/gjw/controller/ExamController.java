@@ -301,5 +301,17 @@ public class ExamController {
         session.setAttribute("all", all);
     }
 
+    @RequestMapping("pauseExam")
+    public void pauseExam(HttpSession session, HttpServletResponse response, HttpServletRequest request) throws IOException {
+        response.setContentType("text/text;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
+        ExamInfo examInfo = (ExamInfo) session.getAttribute("examInfo");
+        Map map = new HashMap();
+        map.put("eID", examInfo.getEID());
+        map.put("state", "暂停考试");
+        recordService.updateRecordStateByEID(map);
+        response.getWriter().print("pause");
+    }
+
 
 }

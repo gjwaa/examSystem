@@ -68,6 +68,7 @@
         }
     </script>
     <script>
+
         var host = window.location.host;
         var webSocket =
             new WebSocket("ws://" + host + "/ws?id=" + Math.random());
@@ -112,11 +113,38 @@
                 dataType: "text",
                 success: function (res) {
                     //如果已经开始状态，禁按钮...未做
+                    if (res=='考试中'){
+                        startFun();
+                    }else if(res=='暂停考试'){
+                        $.post({
+                            url: "${pageContext.request.contextPath}/exam/getRestTime",
+                            data: {
+                                eID: "${sessionScope.get("examInfo").getEID()}"
+                            },
+                            dataType: "text",
+                            success: function (times) {
+                                alert(times)
+                                var hour = 0,
+                                    minute = 0,
+                                    second = 0;
+                                if (times > 0) {
+                                    hour = Math.floor(times / (60 * 60));
+                                    minute = Math.floor(times / 60) - (hour * 60);
+                                    second = Math.floor(times) - (hour * 60 * 60) - (minute * 60);
+                                }
+                                if (hour <= 9) hour = '0' + hour;
+                                if (minute <= 9) minute = '0' + minute;
+                                if (second <= 9) second = '0' + second;
+                                $("#timeDown").text(hour + "小时：" + minute + "分钟：" + second + "秒")
+                            }
+                        });
+                    }
                     $("#stateLabel").text('考试状态：' + res);
+
                 }
             });
 
-            $("#startExam").click(function () {
+            function startFun(){
                 $.post({
                     url: "${pageContext.request.contextPath}/exam/startExam",
                     dataType: "text",
@@ -128,6 +156,10 @@
                         }
                     }
                 });
+            }
+
+            $("#startExam").click(function () {
+                startFun();
             });
 
             function getTime() {
@@ -143,8 +175,9 @@
                 });
             };
 
+            var timer = null;
+
             function countDown(times) {
-                var timer = null;
                 timer = setInterval(function () {
                     var hour = 0,
                         minute = 0,
@@ -158,7 +191,13 @@
                     if (minute <= 9) minute = '0' + minute;
                     if (second <= 9) second = '0' + second;
                     setRestTime(hour * 60 * 60 + minute * 60 + second);
-                    $("#timeDown").text(hour + "小时：" + minute + "分钟：" + second + "秒")
+                    var show = hour + "小时：" + minute + "分钟：" + second + "秒"
+                    var wsMsg = {
+                        info: "showTime",
+                        timeData: show
+                    }
+                    webSocket.send(JSON.stringify(wsMsg));
+                    $("#timeDown").text(show)
                     times--;
                 }, 1000);
                 if (times <= 0) {
@@ -180,6 +219,20 @@
                     }
                 });
             }
+
+
+            $("#pauseExam").click(function () {
+                $.post({
+                    url: "${pageContext.request.contextPath}/exam/pauseExam",
+                    dataType: "text",
+                    success: function (res) {
+                        if (res == 'pause') {
+                            clearInterval(timer);
+                            $("#stateLabel").text('考试状态：暂停考试');
+                        }
+                    }
+                });
+            });
 
         });
 

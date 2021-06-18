@@ -6,9 +6,11 @@ package com.gjw.websocket;
  * @date: 2021/6/16 14:36
  * @desc:
  */
+
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.*;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -34,7 +36,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
         String uid = session.getAttributes().get("uid").toString();
 
         // 绑定session
-        if (userSocketSessionMap.get(uid) == null) {
+        if (userSocketSessionMap.get(uid) == null && !uid.equals("admin")) {
             userSocketSessionMap.put(uid, session);
         }
 //        try {
