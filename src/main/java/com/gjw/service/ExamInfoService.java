@@ -3,6 +3,7 @@ package com.gjw.service;
 import com.gjw.bean.ExamInfo;
 import com.gjw.bean.Student;
 import com.gjw.bean.ViewStuVo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,12 @@ public interface ExamInfoService {
 
     ExamInfo queryExamInfoByENum(String eNum);
 
+    ExamInfo queryExamInfoByEID(int eID);
+
     List<ExamInfo> queryAllEName();
 
+    int insertType(String tType,String tContent);
+
+    String queryTContent(String tType);
 
 }

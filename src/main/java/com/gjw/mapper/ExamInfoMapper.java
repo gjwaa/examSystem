@@ -33,6 +33,12 @@ public interface ExamInfoMapper {
 
     ExamInfo queryExamInfoByENum(String eNum);
 
+    ExamInfo queryExamInfoByEID(int eID);
+
     List<ExamInfo> queryAllEName();
+
+    int insertType(@Param("tType") String tType,@Param("tContent") String tContent);
+
+    String queryTContent(String tType);
 
 }

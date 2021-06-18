@@ -32,7 +32,7 @@
             layui.use('form', function() {
                 var form = layui.form;
                 form.on('select(eNameSel)', function (data) {
-                     selText = data.elem.selectedOptions[0].text;
+                    selText = data.elem.selectedOptions[0].text;
                 });
             });
 

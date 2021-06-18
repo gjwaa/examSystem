@@ -120,7 +120,7 @@
 
         })
 
-        $("#examBtn").attr("disable", true);
+
     </script>
 
 </head>
@@ -141,8 +141,8 @@
     </fieldset>
     <div style="text-align: center">
 
-        <button class="layui-btn layui-btn-disabled" id="examBtn" disabled="disabled">等待考试</button>
-
+<%--        <button class="layui-btn layui-btn-disabled" id="examBtn" disabled="disabled">等待考试</button>--%>
+        <button class="layui-btn layui-btn-disabled" id="examBtn">等待考试</button>
     </div>
 
 

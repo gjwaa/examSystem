@@ -7,6 +7,7 @@ import com.gjw.bean.Question;
 import com.gjw.bean.Student;
 import com.gjw.bean.TableData;
 import com.gjw.service.ExamInfoService;
+import com.gjw.service.QuestionService;
 import com.gjw.service.RecordService;
 import com.gjw.service.StudentService;
 import com.gjw.utils.ExcelUtil;
@@ -53,6 +54,10 @@ public class ExamController {
     @Qualifier("recordServiceImpl")
     private RecordService recordService;
 
+    @Autowired
+    @Qualifier("questionServiceImpl")
+    private QuestionService questionService;
+
 
     @RequestMapping("/showInfo")
     public String showInfo(HttpSession session) throws Exception {
@@ -88,6 +93,10 @@ public class ExamController {
         if (count <= 0) {
             examInfoService.insertExamInfo(examInfo);
             recordService.insertEID(examInfo.getEID());
+            String singleInfo = (String) session.getAttribute("singleInfo");
+            String multipleInfo = (String) session.getAttribute("multipleInfo");
+            examInfoService.insertType("单选题", singleInfo);
+            examInfoService.insertType("多选题", multipleInfo);
             System.err.println(examListByExcel);
 
             System.out.println("=================================================");
@@ -140,6 +149,7 @@ public class ExamController {
                 singleQuestion.setQOptD(String.valueOf(lo.get(6)));
                 singleQuestion.setQAnswer(String.valueOf(lo.get(7)));
                 singleQuestion.setQScore(String.valueOf(lo.get(8)));
+                singleQuestion.setEID(examInfo.getEID());
                 singleOpt.add(singleQuestion);
                 session.setAttribute("singleOptList", singleOpt);
             } else if (String.valueOf(lo.get(0)).equals("多选题")) {
@@ -152,6 +162,7 @@ public class ExamController {
                 multipleQuestion.setQOptD(String.valueOf(lo.get(6)));
                 multipleQuestion.setQAnswer(String.valueOf(lo.get(7)));
                 multipleQuestion.setQScore(String.valueOf(lo.get(8)));
+                multipleQuestion.setEID(examInfo.getEID());
                 multipleOpt.add(multipleQuestion);
                 session.setAttribute("multipleOptList", multipleOpt);
             }
@@ -160,6 +171,10 @@ public class ExamController {
         allList.addAll(singleOpt);
         allList.addAll(multipleOpt);
         session.setAttribute("allQuestion", allList);
+        int i = questionService.queryQuestionRepeat();
+        if (i <= 0) {
+            questionService.insertQuestion(allList);
+        }
 
 
         return "examManage";
@@ -246,13 +261,13 @@ public class ExamController {
         String time = Pattern.compile(REGEX).matcher(examInfo.getETime()).replaceAll("").trim();
         if (restTime == null) {
             response.getWriter().print(Integer.valueOf(time) * 60);
-        }else {
+        } else {
             response.getWriter().print(restTime);
         }
     }
 
     @RequestMapping("setRestTime")
-    public void setRestTime(HttpServletResponse response, HttpSession session, int eID,int restTime) throws IOException {
+    public void setRestTime(HttpServletResponse response, HttpSession session, int eID, int restTime) throws IOException {
         response.setContentType("text/text;charset=utf-8");
         response.setCharacterEncoding("UTF-8");
         recordService.updateRestTimeByEID(eID, restTime);
@@ -261,8 +276,29 @@ public class ExamController {
     }
 
     @RequestMapping("paper")
-    public String paper(){
-        return "viewPaper";
+    public String paper() {
+        return "stu/exam";
+    }
+
+    @RequestMapping("question")
+    public void question(HttpServletResponse response, HttpSession session, int eID) {
+        response.setContentType("text/text;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
+
+        ExamInfo examInfoByDB = examInfoService.queryExamInfoByEID(eID);
+        session.setAttribute("qExamInfo", examInfoByDB);
+        List<Question> singles = questionService.queryQuestionByEID(eID, "单选题");
+        session.setAttribute("singles", singles);
+        List<Question> multiples = questionService.queryQuestionByEID(eID, "多选题");
+        session.setAttribute("multiples", multiples);
+        String singleTip = examInfoService.queryTContent("单选题");
+        session.setAttribute("singleTip", singleTip);
+        String multipleTip = examInfoService.queryTContent("多选题");
+        session.setAttribute("multipleTip", multipleTip);
+        List<Question> all = new ArrayList<Question>();
+        all.addAll(singles);
+        all.addAll(multiples);
+        session.setAttribute("all", all);
     }
 
 

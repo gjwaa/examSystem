@@ -7,7 +7,7 @@
     <select id="checkExamRepeat" resultType="int">
         select count(*)
         from examinfo
-        where eNum=#{eNum}
+        where eNum = #{eNum}
     </select>
 
 
@@ -16,22 +16,21 @@
             keyColumn="eID"
             keyProperty="eID">
         insert into examinfo (eNum, eName, eTime, eType, eWork, eOrgan, eLevel, ePeople, eScore, courseID,
-        courseName)
-        values
-        (
-            #{eNum},#{eName},#{eTime},#{eType},#{eWork},#{eOrgan},#{eLevel},#{ePeople},#{eScore},#{courseID},#{courseName}
-        )
+                              courseName)
+        values (#{eNum}, #{eName}, #{eTime}, #{eType}, #{eWork}, #{eOrgan}, #{eLevel}, #{ePeople}, #{eScore},
+                #{courseID}, #{courseName})
     </insert>
 
     <delete id="delExamInfoByENUM" parameterType="String">
         delete
         from examinfo
-        where eNum=#{eNum}
+        where eNum = #{eNum}
     </delete>
 
     <select id="queryAllStuByEIDLimit" resultMap="stuVo">
-        SELECT s.sName,s.IDCard,s.aNumber,e.eName,e.eLevel
-        FROM student s,examinfo e
+        SELECT s.sName, s.IDCard, s.aNumber, e.eName, e.eLevel
+        FROM student s,
+             examinfo e
         WHERE s.eID = e.eID
         limit ${page},#{limit}
     </select>
@@ -44,7 +43,7 @@
             <result column="eLevel" property="eLevel"/>
         </association>
     </resultMap>
-    
+
     <update id="updateExamInfoByENUM" parameterType="Map">
         update examinfo
         set ePeople = #{ePeople}
@@ -53,12 +52,20 @@
 
     <select id="queryExamInfoByENum" parameterType="String" resultType="ExamInfo">
         select *
-        from examinfo where eNum=#{eNum}
+        from examinfo
+        where eNum = #{eNum}
+    </select>
+
+    <select id="queryExamInfoByEID" parameterType="int" resultType="ExamInfo">
+        select *
+        from examinfo
+        where eID = #{eID}
     </select>
 
     <select id="queryAllStuByEID" resultMap="vo">
-        SELECT s.sName,s.IDCard,s.aNumber,e.eName,e.eLevel
-        FROM student s,examinfo e
+        SELECT s.sName, s.IDCard, s.aNumber, e.eName, e.eLevel
+        FROM student s,
+             examinfo e
         WHERE s.eID = e.eID
     </select>
     <resultMap id="vo" type="Student">
@@ -74,6 +81,17 @@
     <select id="queryAllEName" resultType="java.lang.String">
         select eName
         from examinfo
+    </select>
+
+    <insert id="insertType">
+        insert into type (tType, tContent)
+        values (#{tType}, #{tContent})
+    </insert>
+
+    <select id="queryTContent" parameterType="String" resultType="String">
+        select tContent
+        from type
+        where tType = #{tType}
     </select>
 
 

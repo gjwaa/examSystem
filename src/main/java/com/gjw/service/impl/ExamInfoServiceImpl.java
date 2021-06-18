@@ -36,8 +36,8 @@ public class ExamInfoServiceImpl implements ExamInfoService {
     }
 
     @Override
-    public List<Student> queryAllStuByEIDLimit(int eID,int page,int limit) {
-        return examInfoMapper.queryAllStuByEIDLimit(eID,page,limit);
+    public List<Student> queryAllStuByEIDLimit(int eID, int page, int limit) {
+        return examInfoMapper.queryAllStuByEIDLimit(eID, page, limit);
     }
 
     @Override
@@ -61,7 +61,22 @@ public class ExamInfoServiceImpl implements ExamInfoService {
     }
 
     @Override
+    public ExamInfo queryExamInfoByEID(int eID) {
+        return examInfoMapper.queryExamInfoByEID(eID);
+    }
+
+    @Override
     public List<ExamInfo> queryAllEName() {
         return examInfoMapper.queryAllEName();
+    }
+
+    @Override
+    public int insertType(String tType, String tContent) {
+        return examInfoMapper.insertType(tType, tContent);
+    }
+
+    @Override
+    public String queryTContent(String tType) {
+        return examInfoMapper.queryTContent(tType);
     }
 }

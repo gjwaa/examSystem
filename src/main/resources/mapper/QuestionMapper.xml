@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gjw.mapper.QuestionMapper">
+
+    <insert id="insertQuestion" parameterType="java.util.List">
+        insert into question (eID, qNum, qType, qTitle, qOptA, qOptB, qOptC, qOptD, qScore, qAnswer)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.eID},
+            #{item.qNum},
+            #{item.qType},
+            #{item.qTitle},
+            #{item.qOptA},
+            #{item.qOptB},
+            #{item.qOptC},
+            #{item.qOptD},
+            #{item.qScore},
+            #{item.qAnswer}
+            )
+        </foreach>
+    </insert>
+
+    <select id="queryQuestionRepeat" resultType="int">
+        select count(*)
+        from question q,examinfo e
+        where q.eID = e.eID
+    </select>
+
+    <select id="queryQuestionByEID" resultType="Question">
+        select *
+        from question
+        where eID = #{eID}
+          and qType = #{qType}
+    </select>
+
+
+</mapper>

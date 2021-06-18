@@ -9,7 +9,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>预览试卷</title>
+    <title>考试</title>
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/layui/css/layui.css" media="all">
     <script src="${pageContext.request.contextPath}/js/jquery-3.6.0.js"></script>
@@ -21,6 +21,18 @@
             width: 25%;
         }
     </style>
+    <script>
+        $.post({
+            url: '${pageContext.request.contextPath}/exam/question',
+            data: {
+                eID:${sessionScope.get("stuCheckInfo").getEID()}
+            },
+            dataType: 'json',
+            success: function (res) {
+
+            }
+        })
+    </script>
 </head>
 <body>
 
@@ -29,18 +41,18 @@
         <div class="layui-col-md6">
             <div class="grid-demo grid-demo-bg1">
                 <fieldset class="layui-elem-field" style="margin-top: 30px;">
-                    <legend>${sessionScope.get("examInfo").getEName()}</legend>
+                    <legend>${sessionScope.get("qExamInfo").getEName()}</legend>
                     <div class="layui-field-box">
-                        <label>科目代码：${sessionScope.get("examInfo").getCourseID()}</label>
-                        <label>科目名称：${sessionScope.get("examInfo").getCourseName()}</label>
+                        <label>科目代码：${sessionScope.get("qExamInfo").getCourseID()}</label>
+                        <label>科目名称：${sessionScope.get("qExamInfo").getCourseName()}</label>
                         <label>准考证号：null</label>
                         <label>考生姓名：null</label>
                     </div>
                 </fieldset>
                 <fieldset class="layui-elem-field" style="margin-top: 10px;">
                     <div class="layui-field-box">
-                        <label>${sessionScope.get("multipleInfo")}</label><br><br>
-                        <c:forEach items="${sessionScope.multipleOptList}" var="mutipleOpt" varStatus="i">
+                        <label>${sessionScope.get("multipleTip")}</label><br><br>
+                        <c:forEach items="${sessionScope.multiples}" var="mutipleOpt" varStatus="i">
                             <label>${mutipleOpt.getQNum()}</label>
                             <label>${mutipleOpt.getQTitle()}</label><br>
                             <label>&nbsp;&nbsp;&nbsp;&nbsp;A.${mutipleOpt.getQOptA()}</label><br>
@@ -58,8 +70,8 @@
                 </fieldset>
                 <fieldset class="layui-elem-field" style="margin-top: 10px;">
                     <div class="layui-field-box">
-                        <label>${sessionScope.get("singleInfo")}</label><br><br>
-                        <c:forEach items="${sessionScope.singleOptList}" var="singleOpt" varStatus="i">
+                        <label>${sessionScope.get("singleTip")}</label><br><br>
+                        <c:forEach items="${sessionScope.singles}" var="singleOpt" varStatus="i">
                             <label>${singleOpt.getQNum()}</label>
                             <label>${singleOpt.getQTitle()}</label><br>
                             <label>&nbsp;&nbsp;&nbsp;&nbsp;A.${singleOpt.getQOptA()}</label><br>
@@ -94,14 +106,14 @@
                             <table class="layui-table">
                                 <tbody>
                                 <tr>
-                                    <c:forEach items="${sessionScope.get('allQuestion')}" var="question" varStatus="i">
+                                    <c:forEach items="${sessionScope.get('all')}" var="question" varStatus="i">
                                         <td id="${i.index+1}">${i.index+1}</td>
                                     </c:forEach>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <label>共${sessionScope.get('allQuestion').size()}题</label><br>
+                        <label>共${sessionScope.get('all').size()}题</label><br>
                         <label>已答？题</label><br>
                         <label>还剩？题</label><br>
                         <button class="layui-btn layui-btn-disabled layui-btn-primary layui-border-green">交卷</button>
