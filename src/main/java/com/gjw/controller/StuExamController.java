@@ -6,6 +6,7 @@ import com.gjw.bean.ExamInfo;
 import com.gjw.bean.Student;
 import com.gjw.service.ExamInfoService;
 import com.gjw.service.RecordService;
+import com.gjw.service.StuStateService;
 import com.gjw.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,6 +42,10 @@ public class StuExamController {
     @Qualifier("recordServiceImpl")
     private RecordService recordService;
 
+    @Autowired
+    private StuStateService stuStateService;
+
+
     @RequestMapping("/login")
     public String login() {
         return "/stu/stuLogin";
@@ -57,6 +62,8 @@ public class StuExamController {
 
     @RequestMapping("stuLogin")
     public void stuLogin(HttpSession session, HttpServletResponse response, String eName, String aNumber, String IDCard, String sName) throws IOException {
+        response.setContentType("text/text;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
         Map map = new HashMap();
         map.put("eName", eName);
@@ -79,7 +86,7 @@ public class StuExamController {
     }
 
     @RequestMapping("waitExam/{id}")
-    public String waitExam(HttpServletRequest request, HttpSession session, @PathVariable("id") int id) {
+    public String waitExam(HttpServletRequest request, HttpSession session, @PathVariable("id") String id) {
         request.getSession().setAttribute("uid", id);
 
         return "stu/waitExam";
@@ -110,6 +117,20 @@ public class StuExamController {
         } else {
             response.getWriter().print("noStart");
         }
+
+    }
+
+    @RequestMapping("changeState")
+    public void changeState(HttpServletResponse response, int sID, int eID, String state) throws IOException {
+        response.setContentType("text/text;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
+        String stuState = stuStateService.checkState(eID, sID);
+        if (stuState == null) {
+            stuStateService.insertState(eID, sID, state);
+        } else {
+            stuStateService.updateState(eID, sID, state);
+        }
+        response.getWriter().print("changeState");
 
     }
 

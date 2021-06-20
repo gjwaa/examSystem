@@ -67,7 +67,7 @@
 
         var host = window.location.host;
         var webSocket =
-            new WebSocket("ws://" + host + "/ws?id=" + Math.random());
+            new WebSocket("ws://" + host + "/ws?id=" + ${sessionScope.get("stuCheckInfo").getSID()});
         var hum = null;
         var s_json = null;
         webSocket.onerror = function (event) {
@@ -81,10 +81,12 @@
         };
 
         function onMessage(event) {
-            // alert(event.data)
+
             if (event.data == 'startExam') {
                 $("#examBtn").attr("class", "layui-btn").removeAttr("disabled");
                 $("#examBtn").text("进入考试")
+            } else if (event.data == 'adminClosed') {
+                alert("管理端异常关闭，请联系老师");
             }
 
         }
@@ -141,7 +143,7 @@
     </fieldset>
     <div style="text-align: center">
 
-<%--        <button class="layui-btn layui-btn-disabled" id="examBtn" disabled="disabled">等待考试</button>--%>
+        <%--        <button class="layui-btn layui-btn-disabled" id="examBtn" disabled="disabled">等待考试</button>--%>
         <button class="layui-btn layui-btn-disabled" id="examBtn">等待考试</button>
     </div>
 

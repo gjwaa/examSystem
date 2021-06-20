@@ -2,15 +2,10 @@ package com.gjw.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.gjw.bean.ExamInfo;
-import com.gjw.bean.Question;
-import com.gjw.bean.Student;
-import com.gjw.bean.TableData;
-import com.gjw.service.ExamInfoService;
-import com.gjw.service.QuestionService;
-import com.gjw.service.RecordService;
-import com.gjw.service.StudentService;
+import com.gjw.bean.*;
+import com.gjw.service.*;
 import com.gjw.utils.ExcelUtil;
+import com.gjw.utils.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -58,6 +53,10 @@ public class ExamController {
     @Qualifier("questionServiceImpl")
     private QuestionService questionService;
 
+    @Autowired
+    @Qualifier("answerServiceImpl")
+    private AnswerService answerService;
+
 
     @RequestMapping("/showInfo")
     public String showInfo(HttpSession session) throws Exception {
@@ -92,7 +91,7 @@ public class ExamController {
 
         if (count <= 0) {
             examInfoService.insertExamInfo(examInfo);
-            recordService.insertEID(examInfo.getEID());
+            recordService.insertEID(examInfo.getEID(), "等待考试");
             String singleInfo = (String) session.getAttribute("singleInfo");
             String multipleInfo = (String) session.getAttribute("multipleInfo");
             examInfoService.insertType("单选题", singleInfo);
@@ -141,7 +140,7 @@ public class ExamController {
             List<Object> lo = examListByExcel.get(i);
             if (String.valueOf(lo.get(0)).equals("单选题")) {
                 singleQuestion.setQType(String.valueOf(lo.get(0)));
-                singleQuestion.setQNum(String.valueOf(lo.get(1)));
+                singleQuestion.setQNum(StrUtil.str(String.valueOf(lo.get(1))));
                 singleQuestion.setQTitle(String.valueOf(lo.get(2)));
                 singleQuestion.setQOptA(String.valueOf(lo.get(3)));
                 singleQuestion.setQOptB(String.valueOf(lo.get(4)));
@@ -154,7 +153,7 @@ public class ExamController {
                 session.setAttribute("singleOptList", singleOpt);
             } else if (String.valueOf(lo.get(0)).equals("多选题")) {
                 multipleQuestion.setQType(String.valueOf(lo.get(0)));
-                multipleQuestion.setQNum(String.valueOf(lo.get(1)));
+                multipleQuestion.setQNum(StrUtil.str(String.valueOf(lo.get(1))));
                 multipleQuestion.setQTitle(String.valueOf(lo.get(2)));
                 multipleQuestion.setQOptA(String.valueOf(lo.get(3)));
                 multipleQuestion.setQOptB(String.valueOf(lo.get(4)));
@@ -208,6 +207,7 @@ public class ExamController {
     @ResponseBody
     public String stuInfo(HttpSession session, int page, int limit) {
         ExamInfo examInfo = (ExamInfo) session.getAttribute("examInfo");
+        page = (page - 1) * limit;
         List<Student> students = examInfoService.queryAllStuByEIDLimit(examInfo.getEID(), page, limit);
         int count = examInfoService.queryAllStuByEID(examInfo.getEID()).size();
         JSONObject jsonObject = new JSONObject();
@@ -281,10 +281,10 @@ public class ExamController {
     }
 
     @RequestMapping("question")
-    public void question(HttpServletResponse response, HttpSession session, int eID) {
+    public void question(HttpServletResponse response, HttpSession session, int eID) throws IOException {
         response.setContentType("text/text;charset=utf-8");
         response.setCharacterEncoding("UTF-8");
-
+        System.out.println(eID + "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         ExamInfo examInfoByDB = examInfoService.queryExamInfoByEID(eID);
         session.setAttribute("qExamInfo", examInfoByDB);
         List<Question> singles = questionService.queryQuestionByEID(eID, "单选题");
@@ -299,6 +299,7 @@ public class ExamController {
         all.addAll(singles);
         all.addAll(multiples);
         session.setAttribute("all", all);
+        response.getWriter().print("ok");
     }
 
     @RequestMapping("pauseExam")
@@ -311,6 +312,38 @@ public class ExamController {
         map.put("state", "暂停考试");
         recordService.updateRecordStateByEID(map);
         response.getWriter().print("pause");
+    }
+
+    @RequestMapping("answer")
+    public void answer(HttpServletResponse response, int eID, String qNum, int sID, String answer) throws IOException {
+        response.setContentType("text/text;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
+        String answered = answerService.checkRepeat(eID, qNum, sID);
+        if (answered == null) {
+            answerService.buildAnswer(eID, qNum, sID, answer);
+        } else {
+            answerService.updateAnswer(eID, qNum, sID, answer);
+        }
+        response.getWriter().print("answer");
+
+    }
+
+    @RequestMapping("checkRecovery")
+    @ResponseBody
+    public void checkRecovery(HttpServletResponse response, int eID, int sID) throws IOException {
+        response.setContentType("text/text;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
+        List<Answer> answers = answerService.checkRecovery(eID, sID);
+        JSONObject jsonObject = new JSONObject();
+        if (answers != null) {
+            jsonObject.put("data", answers);
+            response.getWriter().print(jsonObject);
+        } else {
+            jsonObject.put("data", "noAnswer");
+            response.getWriter().print(jsonObject);
+        }
+
     }
 
 

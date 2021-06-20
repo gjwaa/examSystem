@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface RecordService {
 
-    int insertEID(int eID);
+    int insertEID(int eID,String statestate);
 
     int updateRecordStateByEID(Map map);
 

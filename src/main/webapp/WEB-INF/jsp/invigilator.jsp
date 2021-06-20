@@ -19,6 +19,7 @@
             height: 100%;
         }
     </style>
+
     <script>
         $(function () {
             queryAll(1, 2);
@@ -30,8 +31,11 @@
                 async: false,
                 dataType: 'json',
                 data: {
-                    "limit": limit,
-                    "page": (page - 1) * limit
+                    // "limit": limit,
+                    // "page": (page - 1) * limit
+                    "page": page,
+                    "limit": limit
+
                 },
                 success: function (data) {
                     console.log(data)
@@ -56,9 +60,9 @@
                         });
                         $("#stuList").children().remove();
                         for (let i = 0; i < stuNum; i++) {
-                            var div = '<div class="layui-inline" style="border: #eee 1px solid;margin: 20px 50px">' + '<input type="checkbox" name="" value="" lay-skin="primary"><br>'
+                            var div = '<div class="layui-inline" style="border: #eee 1px solid;margin: 20px 50px" id="">' + '<input type="checkbox" name="" value="" lay-skin="primary"><br>'
                                 + '<label>准考证号：' + res.data[i].aNumber + '</label><br>' + '<label>姓名：' + res.data[i].sName + '</label><br>'
-                                + '<label>状态：</label>' + '<label>等待考试</label><br>' + '<label>成绩：</label>' + '<label>无</label>' + '</div>';
+                                + '<label>状态：</label>' + '<label id="' + res.data[i].sID + '">' + '等待考试</label><br>' + '<label>成绩：</label>' + '<label>无</label>' + '</div>';
                             $("#stuList").append(div);
 
                         }
@@ -71,7 +75,7 @@
 
         var host = window.location.host;
         var webSocket =
-            new WebSocket("ws://" + host + "/ws?id=" + Math.random());
+            new WebSocket("ws://" + host + "/ws?id=admin");
         var hum = null;
         var s_json = null;
         webSocket.onerror = function (event) {
@@ -85,8 +89,10 @@
         };
 
         function onMessage(event) {
-            console.log(event.data);
-            alert(event.data)
+            var receiveMsg = JSON.parse(event.data)
+            if (receiveMsg.info == 'stuExamIng') {
+                $("#"+receiveMsg.data).html("考试中")
+            }
         }
 
         function onOpen(event) {
@@ -113,9 +119,9 @@
                 dataType: "text",
                 success: function (res) {
                     //如果已经开始状态，禁按钮...未做
-                    if (res=='考试中'){
+                    if (res == '考试中') {
                         startFun();
-                    }else if(res=='暂停考试'){
+                    } else if (res == '暂停考试') {
                         $.post({
                             url: "${pageContext.request.contextPath}/exam/getRestTime",
                             data: {
@@ -123,7 +129,7 @@
                             },
                             dataType: "text",
                             success: function (times) {
-                                alert(times)
+                                // alert(times)
                                 var hour = 0,
                                     minute = 0,
                                     second = 0;
@@ -144,7 +150,7 @@
                 }
             });
 
-            function startFun(){
+            function startFun() {
                 $.post({
                     url: "${pageContext.request.contextPath}/exam/startExam",
                     dataType: "text",

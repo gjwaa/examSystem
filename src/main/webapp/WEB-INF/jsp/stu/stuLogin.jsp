@@ -18,7 +18,7 @@
         $(function () {
             $.post({
                 url: '${pageContext.request.contextPath}/stuExam/getEName',
-                data: {"getEName":'#'},
+                data: {"getEName": '#'},
                 dataType: 'json',
                 success: function (res) {
                     console.log(res)
@@ -29,27 +29,27 @@
                 }
             });
 
-            layui.use('form', function() {
+            layui.use('form', function () {
                 var form = layui.form;
                 form.on('select(eNameSel)', function (data) {
                     selText = data.elem.selectedOptions[0].text;
                 });
             });
 
-            $("#IDCard").blur(function (){
+            $("#IDCard").blur(function () {
                 var isIDCard = checkIDCard($("#IDCard").val())
-                if(isIDCard){
+                if (isIDCard) {
                     $("#tips").text("身份证号输入正确")
-                }else {
+                } else {
                     $("#tips").text("身份证号输入有误")
                 }
             });
 
-            $("#sName").blur(function (){
+            $("#sName").blur(function () {
                 var isName = checkName($("#sName").val())
-                if(isName){
+                if (isName) {
                     $("#tips").text("名字输入正确")
-                }else {
+                } else {
                     $("#tips").text("名字输入有误")
                 }
             });
@@ -59,25 +59,25 @@
                 return reg.test(str);
             };
 
-            function checkName(str){
+            function checkName(str) {
                 var reg = /^[\u4e00-\u9fa5]{2,4}$/;
                 return reg.test(str);
             };
 
-            $("#login").click(function (){
+            $("#login").click(function () {
                 $.post({
-                    url:'${pageContext.request.contextPath}/stuExam/stuLogin',
-                    data:{
-                        "eName":selText,
-                        "aNumber":$("#aNUmber").val(),
-                        "IDCard":$("#IDCard").val(),
-                        "sName":$("#sName").val(),
+                    url: '${pageContext.request.contextPath}/stuExam/stuLogin',
+                    data: {
+                        "eName": selText,
+                        "aNumber": $("#aNUmber").val(),
+                        "IDCard": $("#IDCard").val(),
+                        "sName": $("#sName").val(),
                     },
                     dataType: 'json',
-                    success:function (res){
-                        if(res.login=='true'){
-                            $(location).attr("href","${pageContext.request.contextPath}/stuExam/waitExam/1")
-                        }else if(res.login=='false'){
+                    success: function (res) {
+                        if (res.login === 'true') {
+                            $(location).attr("href", "${pageContext.request.contextPath}/stuExam/waitExam/" + $("#IDCard").val())
+                        } else if (res.login === 'false') {
                             alert("信息有误")
                         }
 
@@ -104,7 +104,7 @@
                         <legend>学生考试系统</legend>
                     </fieldset>
                     <div class="layui-container" style="width: 100%">
-                        <form class="layui-form layui-form-pane" action="" method="post" >
+                        <form class="layui-form layui-form-pane" action="" method="post">
                             <div class="layui-form-item">
                                 <label class="layui-form-label">考试名称：</label>
                                 <div class="layui-input-inline">

@@ -4,9 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gjw.mapper.RecordMapper">
 
-    <insert id="insertEID" parameterType="int">
-        insert into record (eID)
-        values (#{eID})
+    <insert id="insertEID">
+        insert into record (eID, state)
+        values (#{eID}, #{state})
     </insert>
 
     <update id="updateRecordStateByEID" parameterType="Map">
@@ -18,12 +18,13 @@
     <select id="queryStateByEID" parameterType="int" resultType="String">
         select state
         from record
-        where eID=#{eID}
+        where eID = #{eID}
     </select>
 
     <select id="queryRestTimeByEID" parameterType="int" resultType="String">
         select restTime
-        from record where eID = #{eID}
+        from record
+        where eID = #{eID}
     </select>
 
     <update id="updateRestTimeByEID">

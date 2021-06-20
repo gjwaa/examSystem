@@ -36,7 +36,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
         String uid = session.getAttributes().get("uid").toString();
 
         // 绑定session
-        if (userSocketSessionMap.get(uid) == null && !uid.equals("admin")) {
+        if (userSocketSessionMap.get(uid) == null) {
             userSocketSessionMap.put(uid, session);
         }
 //        try {
@@ -97,7 +97,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
         while (iterator.hasNext()) {
             // 取值查询
             Map.Entry<String, WebSocketSession> entry = iterator.next();
-            if (entry.getValue().getAttributes().get("uid") == uid) {
+            if (entry.getValue().getAttributes().get("uid").equals(uid)) {
                 iterator.remove();
                 System.out.println("WebSocket in UserMap:" + uid + " removed");
             }
@@ -110,17 +110,22 @@ public class MyWebSocketHandler implements WebSocketHandler {
         return false;
     }
 
+
     // 发送给所有用户
     private boolean sendMessageToAllUsers(WebSocketMessage message) {
         boolean allSendSuccess = true;
         Set<String> clientIds = userSocketSessionMap.keySet();
         WebSocketSession session = null;
         for (String clientId : clientIds) {
+            System.err.println(clientId);
             try {
-                session = userSocketSessionMap.get(clientId);
-                if (session.isOpen()) {
-                    session.sendMessage(message);
-                }
+//                if (!clientId.equals("admin")) {
+                    session = userSocketSessionMap.get(clientId);
+                    if (session.isOpen()) {
+                        session.sendMessage(message);
+                    }
+//                }
+
             } catch (IOException e) {
                 e.printStackTrace();
                 allSendSuccess = false;

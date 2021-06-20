@@ -21,24 +21,58 @@
             width: 25%;
         }
     </style>
+
     <script>
         $(function () {
 
+            $.post({
+                url: '${pageContext.request.contextPath}/exam/checkRecovery',
+                data: {
+                    eID:${sessionScope.get("stuCheckInfo").getEID()},
+                    sID:${sessionScope.get("stuCheckInfo").getSID()}
+                },
+                dataType: 'json',
+                success: function (res) {
+                    if (res.data != 'noAnswer') {
+                        for (let x in res.data) {
+                            // console.log(res.data[x].qNum)
+                            // console.log(res.data[x].answer)
+                            var qNum = res.data[x].qNum;
+                            var answer = res.data[x].answer;
+                            if (answer.length == 1) {
+                                $("#" + qNum).children("." + answer).attr("checked", "true")
+                                // console.log(children)
+                            } else if (answer.length > 1) {
+                                for (let x in answer) {
+                                    $("#" + qNum).children("." + answer[x]).attr("checked", "true")
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+            });
 
             $.post({
                 url: '${pageContext.request.contextPath}/exam/question',
                 data: {
                     eID:${sessionScope.get("stuCheckInfo").getEID()}
                 },
-                dataType: 'json',
+                dataType: 'text',
                 success: function (res) {
-
+                    console.log(res)
+                    if (location.href.indexOf('#reloaded') == -1) {
+                        location.href = location.href + "#reloaded";
+                        location.reload();
+                    }
                 }
             });
 
+
             var host = window.location.host;
             var webSocket =
-                new WebSocket("ws://" + host + "/ws?id=" + Math.random());
+                new WebSocket("ws://" + host + "/ws?id=" + ${sessionScope.get("stuCheckInfo").getSID()});
             var hum = null;
             var s_json = null;
             webSocket.onerror = function (event) {
@@ -50,19 +84,29 @@
             webSocket.onmessage = function (event) {
                 onMessage(event);
             };
+            webSocket.onclose = function (event){
+                onClose(event);
+            };
 
             function onMessage(event) {
                 var receiveMsg = JSON.parse(event.data)
                 if (receiveMsg.info == 'showTime') {
                     // console.log(receiveMsg.timeData)
                     $("#restTime").text(receiveMsg.timeData)
+                } else if (event.data == 'adminClosed') {
+                    alert("管理端异常关闭，请联系老师");
                 }
+
 
             }
 
             function onOpen(event) {
                 console.log("握手成功");
-                // webSocket.send("连接上了");
+                var msg = {
+                    info:"stuExamIng",
+                    data:${sessionScope.get("stuCheckInfo").getSID()}
+                };
+                webSocket.send(JSON.stringify(msg));
             }
 
             function onError(event) {
@@ -70,7 +114,78 @@
                 alert("wrong")
             }
 
-        })
+            function onClose(event){
+                // webSocket.send("stuExamIng");
+            }
+
+            $("input[type=checkbox]").click(function () {
+                var mName = $(this).attr("name");
+                var mNum = mName.replace(/[^0-9]/ig, "");
+                var id = "#" + mNum;
+                var str = '';
+                $("input[name='" + mName + "']").each(function () {
+                    if ($(this).is(":checked")) {
+                        str += $(this).attr("class");
+                    }
+                });
+                console.log(str)
+                doCheckBox(str, $(this).val())
+                if ($(this).is(":checked")) {
+                    $(id).css("background-color", "red")
+                } else if (!$("input[name='" + mName + "']").is(":checked")) {
+                    $(id).css("background-color", "white")
+                }
+            });
+
+            $("input[type=radio]").click(function () {
+                var begin = $("input[type=checkbox]");
+                var i = begin.length;
+                var sName = $(this).attr("name");
+                var sNum = sName.replace(/[^0-9]/ig, "");
+                console.log(sNum)
+                var id = "#" + (parseInt(sNum) + parseInt(i / 4));
+                if ($(this).is(":checked")) {
+                    $(id).css("background-color", "red");
+                    doRadio($(this));
+                }
+            })
+
+            function doCheckBox(answer, qNum) {
+                $.post({
+                    url: '${pageContext.request.contextPath}/exam/answer',
+                    data: {
+                        eID:${sessionScope.get("stuCheckInfo").getEID()},
+                        qNum: qNum,
+                        sID:${sessionScope.get("stuCheckInfo").getSID()},
+                        answer: answer
+                    },
+                    dataType: 'text',
+                    success: function (res) {
+                        console.log(res)
+                    }
+                });
+            };
+
+            function doRadio(radio) {
+                $.post({
+                    url: '${pageContext.request.contextPath}/exam/answer',
+                    data: {
+                        eID:${sessionScope.get("stuCheckInfo").getEID()},
+                        qNum: radio.val(),
+                        sID:${sessionScope.get("stuCheckInfo").getSID()},
+                        answer: radio.attr("class")
+                    },
+                    dataType: 'text',
+                    success: function (res) {
+                        console.log(res)
+                    }
+                });
+            };
+
+
+        });
+
+
     </script>
 </head>
 <body>
@@ -81,6 +196,7 @@
             <div class="grid-demo grid-demo-bg1">
                 <fieldset class="layui-elem-field" style="margin-top: 30px;">
                     <legend>${sessionScope.get("qExamInfo").getEName()}</legend>
+
                     <div class="layui-field-box">
                         <label>科目代码：${sessionScope.get("qExamInfo").getCourseID()}</label>
                         <label>科目名称：${sessionScope.get("qExamInfo").getCourseName()}</label>
@@ -98,11 +214,15 @@
                             <label>&nbsp;&nbsp;&nbsp;&nbsp;B.${mutipleOpt.getQOptB()}</label><br>
                             <label>&nbsp;&nbsp;&nbsp;&nbsp;C.${mutipleOpt.getQOptC()}</label><br>
                             <label>&nbsp;&nbsp;&nbsp;&nbsp;D.${mutipleOpt.getQOptD()}</label><br>
-                            <div class="layui-input-block">
-                                <input type="checkbox" name="${i.index+1}" lay-skin="primary">&nbsp;A&nbsp;</input>
-                                <input type="checkbox" name="${i.index+1}" lay-skin="primary">&nbsp;B&nbsp;</input>
-                                <input type="checkbox" name="${i.index+1}" lay-skin="primary">&nbsp;C&nbsp;</input>
-                                <input type="checkbox" name="${i.index+1}" lay-skin="primary">&nbsp;D&nbsp;</input>
+                            <div class="layui-input-block" id="${mutipleOpt.getQNum()}">
+                                <input type="checkbox" name="m${i.index+1}" lay-skin="primary"
+                                       value="${mutipleOpt.getQNum()}" class="A">&nbsp;A&nbsp;</input>
+                                <input type="checkbox" name="m${i.index+1}" lay-skin="primary"
+                                       value="${mutipleOpt.getQNum()}" class="B">&nbsp;B&nbsp;</input>
+                                <input type="checkbox" name="m${i.index+1}" lay-skin="primary"
+                                       value="${mutipleOpt.getQNum()}" class="C">&nbsp;C&nbsp;</input>
+                                <input type="checkbox" name="m${i.index+1}" lay-skin="primary"
+                                       value="${mutipleOpt.getQNum()}" class="D">&nbsp;D&nbsp;</input>
                             </div>
                         </c:forEach>
                     </div>
@@ -117,11 +237,15 @@
                             <label>&nbsp;&nbsp;&nbsp;&nbsp;B.${singleOpt.getQOptB()}</label><br>
                             <label>&nbsp;&nbsp;&nbsp;&nbsp;C.${singleOpt.getQOptC()}</label><br>
                             <label>&nbsp;&nbsp;&nbsp;&nbsp;D.${singleOpt.getQOptD()}</label><br>
-                            <div class="layui-input-block">
-                                <input type="radio" name="${i.index+1}">&nbsp;A&nbsp;</input>
-                                <input type="radio" name="${i.index+1}">&nbsp;B&nbsp;</input>
-                                <input type="radio" name="${i.index+1}">&nbsp;C&nbsp;</input>
-                                <input type="radio" name="${i.index+1}">&nbsp;D&nbsp;</input>
+                            <div class="layui-input-block" id="${singleOpt.getQNum()}">
+                                <input type="radio" value="${singleOpt.getQNum()}"
+                                       name="s${i.index+1}" class="A">&nbsp;A&nbsp;</input>
+                                <input type="radio" value="${singleOpt.getQNum()}"
+                                       name="s${i.index+1}" class="B">&nbsp;B&nbsp;</input>
+                                <input type="radio" value="${singleOpt.getQNum()}"
+                                       name="s${i.index+1}" class="C">&nbsp;C&nbsp;</input>
+                                <input type="radio" value="${singleOpt.getQNum()}"
+                                       name="s${i.index+1}" class="D">&nbsp;D&nbsp;</input>
                             </div>
                         </c:forEach>
                     </div>
@@ -155,7 +279,7 @@
                         <label>共${sessionScope.get('all').size()}题</label><br>
                         <label>已答？题</label><br>
                         <label>还剩？题</label><br>
-                        <button class="layui-btn layui-btn-disabled layui-btn-primary layui-border-green">交卷</button>
+                        <button class="layui-btn layui-btn-primary layui-border-green">交卷</button>
                     </div>
                 </fieldset>
             </div>
@@ -165,7 +289,6 @@
 
 
 </div>
-
 
 </body>
 </html>

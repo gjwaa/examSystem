@@ -8,7 +8,7 @@ import java.util.Map;
 @Repository
 public interface RecordMapper {
 
-    int insertEID(int eID);
+    int insertEID(@Param("eID") int eID,@Param("state") String state);
 
     int updateRecordStateByEID(Map map);
 

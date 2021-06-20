@@ -15,8 +15,8 @@ public class RecordServiceImpl implements RecordService {
 
 
     @Override
-    public int insertEID(int eID) {
-        return recordMapper.insertEID(eID);
+    public int insertEID(int eID,String state) {
+        return recordMapper.insertEID(eID,state);
     }
 
     @Override

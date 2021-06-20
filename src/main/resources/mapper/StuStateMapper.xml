@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gjw.mapper.StuStateMapper">
+
+    <select id="checkState" resultType="String">
+        select state
+        from stustate
+        where eID = #{eID}
+          and sID = #{sID}
+    </select>
+
+    <insert id="insertState">
+        insert into stustate (sID, eID, state)
+        values (eID = #{eID}, sID = #{sID}, state = #{state})
+    </insert>
+
+    <update id="updateState">
+        update stustate
+        set state = #{state}
+        where eID = #{eID}
+          and sID = #{sID}
+    </update>
+
+
+</mapper>

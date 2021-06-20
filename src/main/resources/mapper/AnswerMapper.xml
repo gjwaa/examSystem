@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gjw.mapper.AnswerMapper">
+
+    <select id="checkRepeat" resultType="String">
+        select answer
+        from answer
+        where eID = #{eID}
+          and sID = #{sID}
+          and qNum = #{qNum}
+    </select>
+
+    <insert id="buildAnswer">
+        insert into answer (eID, qNum, sID, answer)
+        values (#{eID}, #{qNum}, #{sID}, #{answer})
+    </insert>
+
+    <update id="updateAnswer">
+        update answer
+        set answer = #{answer}
+        where eID = #{eID}
+          and sID = #{sID}
+          and qNum = #{qNum}
+    </update>
+
+    <select id="checkRecovery" resultType="Answer">
+        select *
+        from answer
+        where eID = #{eID}
+          and sID = #{sID}
+    </select>
+
+
+</mapper>
