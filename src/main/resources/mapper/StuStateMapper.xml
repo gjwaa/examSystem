@@ -12,8 +12,8 @@
     </select>
 
     <insert id="insertState">
-        insert into stustate (sID, eID, state)
-        values (eID = #{eID}, sID = #{sID}, state = #{state})
+        insert into stustate (eID, sID, state)
+        values (#{eID}, #{sID}, #{state})
     </insert>
 
     <update id="updateState">
@@ -22,6 +22,11 @@
         where eID = #{eID}
           and sID = #{sID}
     </update>
+
+    <select id="queryAllStuState" resultType="StuState">
+        select *
+        from stustate
+    </select>
 
 
 </mapper>

@@ -121,10 +121,11 @@ public class StuExamController {
     }
 
     @RequestMapping("changeState")
-    public void changeState(HttpServletResponse response, int sID, int eID, String state) throws IOException {
+    public void changeState(HttpServletResponse response, int eID, int sID, String state) throws IOException {
         response.setContentType("text/text;charset=utf-8");
         response.setCharacterEncoding("UTF-8");
         String stuState = stuStateService.checkState(eID, sID);
+        System.err.println(stuState+"========<<<<<<");
         if (stuState == null) {
             stuStateService.insertState(eID, sID, state);
         } else {

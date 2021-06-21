@@ -26,33 +26,59 @@
         $(function () {
 
             $.post({
-                url: '${pageContext.request.contextPath}/exam/checkRecovery',
+                url: '${pageContext.request.contextPath}/exam/checkExamState',
                 data: {
-                    eID:${sessionScope.get("stuCheckInfo").getEID()},
-                    sID:${sessionScope.get("stuCheckInfo").getSID()}
+                    eID:${sessionScope.get("stuCheckInfo").getEID()}
                 },
-                dataType: 'json',
+                dataType: 'text',
                 success: function (res) {
-                    if (res.data != 'noAnswer') {
-                        for (let x in res.data) {
-                            // console.log(res.data[x].qNum)
-                            // console.log(res.data[x].answer)
-                            var qNum = res.data[x].qNum;
-                            var answer = res.data[x].answer;
-                            if (answer.length == 1) {
-                                $("#" + qNum).children("." + answer).attr("checked", "true")
-                                // console.log(children)
-                            } else if (answer.length > 1) {
-                                for (let x in answer) {
-                                    $("#" + qNum).children("." + answer[x]).attr("checked", "true")
-                                }
-                            }
-
-                        }
+                    console.log(res)
+                    if (res == '暂停考试') {
+                        $("#confirmExam").attr("class", "layui-btn layui-btn-disabled").attr("disabled", true)
+                        $("input[type='checkbox']").attr("disabled", true);
+                        $("input[type='radio']").attr("disabled", true);
                     }
-
                 }
             });
+
+            checkRecovery();
+            function checkRecovery(){
+                $.post({
+                    url: '${pageContext.request.contextPath}/exam/checkRecovery',
+                    data: {
+                        eID:${sessionScope.get("stuCheckInfo").getEID()},
+                        sID:${sessionScope.get("stuCheckInfo").getSID()}
+                    },
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.data != 'noAnswer') {
+                            var isAnswerNum = 0;
+                            for (let x in res.data) {
+                                // console.log(res.data[x].qNum)
+                                // console.log(res.data[x].answer)
+                                var qNum = res.data[x].qNum;
+                                var answer = (res.data[x].answer).replace(/,/g, '');
+                                if (answer.length == 1) {
+                                    $("#" + qNum).children("." + answer).attr("checked", "true");
+                                    $("#n" + qNum).css("background-color", "#009688");
+                                    // console.log(children)
+                                    isAnswerNum++;
+                                } else if (answer.length > 1) {
+                                    for (let x in answer) {
+                                        $("#" + qNum).children("." + answer[x]).attr("checked", "true");
+                                        $("#n" + qNum).css("background-color", "#009688");
+                                    }
+                                    isAnswerNum++;
+                                } else if (answer.length == 0) {
+                                    isAnswerNum--;
+                                }
+                            }
+                            $("#isAnswer").html("已答 " + isAnswerNum + " 题");
+                            $("#isNoAnswer").html("还剩 " + (${sessionScope.get('all').size()}-isAnswerNum) + " 题");
+                        }
+                    }
+                });
+            }
 
             $.post({
                 url: '${pageContext.request.contextPath}/exam/question',
@@ -84,7 +110,7 @@
             webSocket.onmessage = function (event) {
                 onMessage(event);
             };
-            webSocket.onclose = function (event){
+            webSocket.onclose = function (event) {
                 onClose(event);
             };
 
@@ -93,20 +119,28 @@
                 if (receiveMsg.info == 'showTime') {
                     // console.log(receiveMsg.timeData)
                     $("#restTime").text(receiveMsg.timeData)
-                } else if (event.data == 'adminClosed') {
+                }
+                if (event.data == 'adminClosed') {
                     alert("管理端异常关闭，请联系老师");
                 }
 
+                if (receiveMsg.info == 'pauseExam') {
+                    alert("考试已暂停")
+                    $("#confirmExam").attr("class", "layui-btn layui-btn-disabled").attr("disabled", true)
+                    $("input[type='checkbox']").attr("disabled", true);
+                    $("input[type='radio']").attr("disabled", true);
+                }
 
             }
 
             function onOpen(event) {
                 console.log("握手成功");
                 var msg = {
-                    info:"stuExamIng",
+                    info: "stuExamIng",
                     data:${sessionScope.get("stuCheckInfo").getSID()}
                 };
                 webSocket.send(JSON.stringify(msg));
+                changeState("正在考试");
             }
 
             function onError(event) {
@@ -114,41 +148,66 @@
                 alert("wrong")
             }
 
-            function onClose(event){
+            function onClose(event) {
                 // webSocket.send("stuExamIng");
             }
 
+            function changeState(state) {
+                $.post({
+                    url: '${pageContext.request.contextPath}/stuExam/changeState',
+                    data: {
+                        eID:${sessionScope.get("stuCheckInfo").getEID()},
+                        sID:${sessionScope.get("stuCheckInfo").getSID()},
+                        state: state
+                    },
+                    dataType: 'text',
+                    success: function (res) {
+                        console.log(res)
+
+                    }
+                });
+            }
+
             $("input[type=checkbox]").click(function () {
+                checkNum()
                 var mName = $(this).attr("name");
                 var mNum = mName.replace(/[^0-9]/ig, "");
-                var id = "#" + mNum;
+                var id = "#n" + mNum;
                 var str = '';
                 $("input[name='" + mName + "']").each(function () {
                     if ($(this).is(":checked")) {
-                        str += $(this).attr("class");
+                        str += $(this).attr("class") + ",";
                     }
                 });
-                console.log(str)
-                doCheckBox(str, $(this).val())
+                console.log(str.substring(0, str.length - 1))
+                doCheckBox(str.substring(0, str.length - 1), $(this).val())
                 if ($(this).is(":checked")) {
-                    $(id).css("background-color", "red")
+                    $(id).css("background-color", "#009688")
                 } else if (!$("input[name='" + mName + "']").is(":checked")) {
                     $(id).css("background-color", "white")
                 }
+
             });
 
             $("input[type=radio]").click(function () {
-                var begin = $("input[type=checkbox]");
-                var i = begin.length;
+                // var begin = $("input[type=checkbox]");
+                // var i = begin.length;
+
                 var sName = $(this).attr("name");
                 var sNum = sName.replace(/[^0-9]/ig, "");
                 console.log(sNum)
-                var id = "#" + (parseInt(sNum) + parseInt(i / 4));
+                var id = "#n" + sNum;
                 if ($(this).is(":checked")) {
-                    $(id).css("background-color", "red");
+                    $(id).css("background-color", "#009688");
                     doRadio($(this));
                 }
+
             })
+
+            function checkNum(){
+                var len = $("input:checkbox:checked").length;
+                alert(len)
+            }
 
             function doCheckBox(answer, qNum) {
                 $.post({
@@ -215,13 +274,13 @@
                             <label>&nbsp;&nbsp;&nbsp;&nbsp;C.${mutipleOpt.getQOptC()}</label><br>
                             <label>&nbsp;&nbsp;&nbsp;&nbsp;D.${mutipleOpt.getQOptD()}</label><br>
                             <div class="layui-input-block" id="${mutipleOpt.getQNum()}">
-                                <input type="checkbox" name="m${i.index+1}" lay-skin="primary"
+                                <input type="checkbox" name="m${mutipleOpt.getQNum()}" lay-skin="primary"
                                        value="${mutipleOpt.getQNum()}" class="A">&nbsp;A&nbsp;</input>
-                                <input type="checkbox" name="m${i.index+1}" lay-skin="primary"
+                                <input type="checkbox" name="m${mutipleOpt.getQNum()}" lay-skin="primary"
                                        value="${mutipleOpt.getQNum()}" class="B">&nbsp;B&nbsp;</input>
-                                <input type="checkbox" name="m${i.index+1}" lay-skin="primary"
+                                <input type="checkbox" name="m${mutipleOpt.getQNum()}" lay-skin="primary"
                                        value="${mutipleOpt.getQNum()}" class="C">&nbsp;C&nbsp;</input>
-                                <input type="checkbox" name="m${i.index+1}" lay-skin="primary"
+                                <input type="checkbox" name="m${mutipleOpt.getQNum()}" lay-skin="primary"
                                        value="${mutipleOpt.getQNum()}" class="D">&nbsp;D&nbsp;</input>
                             </div>
                         </c:forEach>
@@ -239,13 +298,13 @@
                             <label>&nbsp;&nbsp;&nbsp;&nbsp;D.${singleOpt.getQOptD()}</label><br>
                             <div class="layui-input-block" id="${singleOpt.getQNum()}">
                                 <input type="radio" value="${singleOpt.getQNum()}"
-                                       name="s${i.index+1}" class="A">&nbsp;A&nbsp;</input>
+                                       name="s${singleOpt.getQNum()}" class="A">&nbsp;A&nbsp;</input>
                                 <input type="radio" value="${singleOpt.getQNum()}"
-                                       name="s${i.index+1}" class="B">&nbsp;B&nbsp;</input>
+                                       name="s${singleOpt.getQNum()}" class="B">&nbsp;B&nbsp;</input>
                                 <input type="radio" value="${singleOpt.getQNum()}"
-                                       name="s${i.index+1}" class="C">&nbsp;C&nbsp;</input>
+                                       name="s${singleOpt.getQNum()}" class="C">&nbsp;C&nbsp;</input>
                                 <input type="radio" value="${singleOpt.getQNum()}"
-                                       name="s${i.index+1}" class="D">&nbsp;D&nbsp;</input>
+                                       name="s${singleOpt.getQNum()}" class="D">&nbsp;D&nbsp;</input>
                             </div>
                         </c:forEach>
                     </div>
@@ -262,24 +321,28 @@
                     <div class="layui-field-box">
                         <label>1、本试卷依据2005年颁布的《数控二手车》国家职业标准命制，考试时间120分钟</label><br>
                         <label>2、本试卷依据2005年颁布的《数控二手车》国家职业标准命制，考试时间120分钟</label><br>
-                        <label>3、本试卷依据2005年颁布的《数控二手车》国家职业标准命制，考试时间120分钟</label><br>
-                        <label id="restTime">剩余时间：2:00:00</label><br>
+                        <label>3、本试卷依据2005年颁布的《数控二手车》国家职业标准命制，考试时间120分钟</label><br><br>
+                        <label id="restTime">剩余时间：2:00:00</label><br><br>
                         <label>题目导航栏</label><br>
                         <div class="layui-form">
-                            <table class="layui-table">
+                            <table class="layui-table" id="answertable">
                                 <tbody>
-                                <tr>
-                                    <c:forEach items="${sessionScope.get('all')}" var="question" varStatus="i">
-                                        <td id="${i.index+1}">${i.index+1}</td>
-                                    </c:forEach>
-                                </tr>
+                                <c:forEach items="${sessionScope.get('all')}" var="question" varStatus="i">
+                                    <td id="n${question.getQNum()}">${question.getQNum()}</td>
+                                    <c:if test="${(i.index+1)%5==0}">
+                                        <tr></tr>
+                                    </c:if>
+                                </c:forEach>
                                 </tbody>
                             </table>
                         </div>
-                        <label>共${sessionScope.get('all').size()}题</label><br>
-                        <label>已答？题</label><br>
-                        <label>还剩？题</label><br>
-                        <button class="layui-btn layui-btn-primary layui-border-green">交卷</button>
+                        <div style="text-align: center">
+                            <label>共${sessionScope.get('all').size()}题</label>&nbsp;&nbsp;
+                            <label id="isAnswer">已答&nbsp;&nbsp;题</label>&nbsp;&nbsp;
+                            <label id="isNoAnswer">还剩&nbsp;&nbsp;题</label><br><br>
+                            <button class="layui-btn" id="confirmExam">交&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;卷
+                            </button>
+                        </div>
                     </div>
                 </fieldset>
             </div>

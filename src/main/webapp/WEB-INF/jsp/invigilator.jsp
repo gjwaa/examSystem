@@ -62,7 +62,7 @@
                         for (let i = 0; i < stuNum; i++) {
                             var div = '<div class="layui-inline" style="border: #eee 1px solid;margin: 20px 50px" id="">' + '<input type="checkbox" name="" value="" lay-skin="primary"><br>'
                                 + '<label>准考证号：' + res.data[i].aNumber + '</label><br>' + '<label>姓名：' + res.data[i].sName + '</label><br>'
-                                + '<label>状态：</label>' + '<label id="' + res.data[i].sID + '">' + '等待考试</label><br>' + '<label>成绩：</label>' + '<label>无</label>' + '</div>';
+                                + '<label>状态：</label>' + '<label id="' + res.data[i].sID + '">' + '等待登录</label><br>' + '<label>成绩：</label>' + '<label>无</label>' + '</div>';
                             $("#stuList").append(div);
 
                         }
@@ -91,7 +91,7 @@
         function onMessage(event) {
             var receiveMsg = JSON.parse(event.data)
             if (receiveMsg.info == 'stuExamIng') {
-                $("#"+receiveMsg.data).html("考试中")
+                $("#" + receiveMsg.data).html("考试中")
             }
         }
 
@@ -112,6 +112,17 @@
         $(function () {
 
             $.post({
+                url: "${pageContext.request.contextPath}/exam/checkStuState",
+                dataType: "json",
+                success: function (res) {
+                    console.log(res)
+                    for (let x in res) {
+                        $("#" + res[x].sID).html(res[x].state);
+                    }
+                }
+            });
+
+            $.post({
                 url: "${pageContext.request.contextPath}/exam/checkExamState",
                 data: {
                     eID: "${sessionScope.get("examInfo").getEID()}"
@@ -120,8 +131,10 @@
                 success: function (res) {
                     //如果已经开始状态，禁按钮...未做
                     if (res == '考试中') {
+                        $("#startExam").attr("class", "layui-btn layui-btn-disabled").attr("disabled", "disabled");
                         startFun();
                     } else if (res == '暂停考试') {
+                        $("#pauseExam").attr("class", "layui-btn layui-btn-disabled").attr("disabled", "disabled");
                         $.post({
                             url: "${pageContext.request.contextPath}/exam/getRestTime",
                             data: {
@@ -166,6 +179,8 @@
 
             $("#startExam").click(function () {
                 startFun();
+                $("#startExam").attr("class", "layui-btn layui-btn-disabled").attr("disabled", "disabled");
+                $("#pauseExam").attr("class", "layui-btn").removeAttr("disabled");
             });
 
             function getTime() {
@@ -228,6 +243,8 @@
 
 
             $("#pauseExam").click(function () {
+                $("#pauseExam").attr("class", "layui-btn layui-btn-disabled").attr("disabled", "disabled");
+                $("#startExam").attr("class", "layui-btn").removeAttr("disabled");
                 $.post({
                     url: "${pageContext.request.contextPath}/exam/pauseExam",
                     dataType: "text",
@@ -235,6 +252,11 @@
                         if (res == 'pause') {
                             clearInterval(timer);
                             $("#stateLabel").text('考试状态：暂停考试');
+                            var pauseMsg = {
+                                info: "pauseExam",
+                                data: "all"
+                            }
+                            webSocket.send(JSON.stringify(pauseMsg));
                         }
                     }
                 });
@@ -258,7 +280,7 @@
                     <div class="layui-field-box">
                         <label id="stateLabel">考试状态：</label><br><br>
                         <label>等待倒计时：</label><br><br>
-                        <label id="timeDown">99999</label><br><br>
+                        <label id="timeDown"></label><br><br>
                         <button type="button" class="layui-btn" id="startExam">开始考试</button>
                         <br><br>
                         <button type="button" class="layui-btn" id="compulsorySubmit">强制交卷</button>

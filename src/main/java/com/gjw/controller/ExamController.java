@@ -57,6 +57,10 @@ public class ExamController {
     @Qualifier("answerServiceImpl")
     private AnswerService answerService;
 
+    @Autowired
+    @Qualifier("stuStateServiceImpl")
+    private StuStateService stuStateService;
+
 
     @RequestMapping("/showInfo")
     public String showInfo(HttpSession session) throws Exception {
@@ -237,9 +241,7 @@ public class ExamController {
         Map map = new HashMap();
         map.put("eID", examInfo.getEID());
         map.put("state", "考试中");
-//        request.getSession().setAttribute("state","startExam");
         recordService.updateRecordStateByEID(map);
-//        session.setAttribute("uid", "admin");
         response.getWriter().print("start");
     }
 
@@ -296,8 +298,8 @@ public class ExamController {
         String multipleTip = examInfoService.queryTContent("多选题");
         session.setAttribute("multipleTip", multipleTip);
         List<Question> all = new ArrayList<Question>();
-        all.addAll(singles);
         all.addAll(multiples);
+        all.addAll(singles);
         session.setAttribute("all", all);
         response.getWriter().print("ok");
     }
@@ -329,7 +331,7 @@ public class ExamController {
 
     }
 
-    @RequestMapping("checkRecovery")
+    @RequestMapping("checkRecovery")//恢复答案
     @ResponseBody
     public void checkRecovery(HttpServletResponse response, int eID, int sID) throws IOException {
         response.setContentType("text/text;charset=utf-8");
@@ -343,6 +345,18 @@ public class ExamController {
             jsonObject.put("data", "noAnswer");
             response.getWriter().print(jsonObject);
         }
+
+    }
+
+    @RequestMapping("checkStuState")
+    @ResponseBody
+    public void checkStuState(HttpServletResponse response) throws IOException {
+        response.setContentType("text/text;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
+        List<StuState> stuStates = stuStateService.queryAllStuState();
+
+
+        response.getWriter().print(JSONObject.toJSONString(stuStates));
 
     }
 
