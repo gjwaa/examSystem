@@ -2,16 +2,14 @@ package com.gjw.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.gjw.bean.Answer;
 import com.gjw.bean.ExamInfo;
+import com.gjw.bean.Grade;
 import com.gjw.bean.Student;
-import com.gjw.service.ExamInfoService;
-import com.gjw.service.RecordService;
-import com.gjw.service.StuStateService;
-import com.gjw.service.StudentService;
+import com.gjw.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -43,7 +41,12 @@ public class StuExamController {
     private RecordService recordService;
 
     @Autowired
-    private StuStateService stuStateService;
+    @Qualifier("gradeServiceImpl")
+    private GradeService gradeService;
+
+    @Autowired
+    @Qualifier("answerServiceImpl")
+    private AnswerService answerService;
 
 
     @RequestMapping("/login")
@@ -124,14 +127,28 @@ public class StuExamController {
     public void changeState(HttpServletResponse response, int eID, int sID, String state) throws IOException {
         response.setContentType("text/text;charset=utf-8");
         response.setCharacterEncoding("UTF-8");
-        String stuState = stuStateService.checkState(eID, sID);
-        System.err.println(stuState+"========<<<<<<");
+        String stuState = gradeService.checkState(eID, sID);
+        System.err.println(stuState + "========<<<<<<");
         if (stuState == null) {
-            stuStateService.insertState(eID, sID, state);
+            gradeService.insertState(eID, sID, state);
         } else {
-            stuStateService.updateState(eID, sID, state);
+            gradeService.updateState(eID, sID, state);
         }
         response.getWriter().print("changeState");
+
+    }
+
+    @RequestMapping("handPaper")
+    public void handPaper(HttpServletResponse response, int eID, int sID) {
+        response.setContentType("text/text;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
+        List<Answer> answers = answerService.judgeAnswer(eID, sID);
+        int point = 0;
+        for (Answer answer : answers) {
+            point += Integer.valueOf(answer.getQuestion().getQScore());
+        }
+        gradeService.updateGrade(eID, sID, point);
+        //状态改成已交卷
 
     }
 

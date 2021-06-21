@@ -14,6 +14,22 @@
     <script src="${pageContext.request.contextPath}/js/jquery-3.6.0.js"></script>
     <script src="${pageContext.request.contextPath}/layui/layui.js"></script>
     <script>
+        $(function (){
+            $.post({
+                url: '${pageContext.request.contextPath}/exam/question',
+                data: {
+                    eID:${sessionScope.get("stuCheckInfo").getEID()}
+                },
+                dataType: 'text',
+                success: function (res) {
+                    console.log(res)
+                    // if (location.href.indexOf('#reloaded') == -1) {
+                    //     location.href = location.href + "#reloaded";
+                    //     location.reload();
+                    // }
+                }
+            });
+        });
 
         layui.use('table', function () {
             var table = layui.table;

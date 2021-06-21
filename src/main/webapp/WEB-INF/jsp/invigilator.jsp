@@ -93,6 +93,7 @@
             if (receiveMsg.info == 'stuExamIng') {
                 $("#" + receiveMsg.data).html("考试中")
             }
+
         }
 
         function onOpen(event) {
@@ -106,7 +107,11 @@
         }
 
         function startExam() {
-            webSocket.send("startExam");
+            var msg = {
+                info: "startExam",
+                data: ""
+            };
+            webSocket.send(JSON.stringify(msg));
         }
 
         $(function () {
@@ -261,6 +266,7 @@
                     }
                 });
             });
+
 
         });
 

@@ -1,13 +1,13 @@
 package com.gjw.mapper;
 
-import com.gjw.bean.StuState;
+import com.gjw.bean.Grade;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface StuStateMapper {
+public interface GradeMapper {
 
     String checkState(@Param("eID") int eID, @Param("sID") int sID);
 
@@ -15,6 +15,8 @@ public interface StuStateMapper {
 
     int updateState(@Param("eID") int eID, @Param("sID") int sID, @Param("state") String state);
 
-    List<StuState> queryAllStuState();
+    List<Grade> queryAllStuState();
+
+    int updateGrade(@Param("eID") int eID, @Param("sID") int sID,@Param("stuGrade") int stuGrade);
 
 }

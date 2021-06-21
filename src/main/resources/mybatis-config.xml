@@ -23,6 +23,6 @@
         <mapper resource="mapper/RecordMapper.xml"/>
         <mapper resource="mapper/QuestionMapper.xml"/>
         <mapper resource="mapper/AnswerMapper.xml"/>
-        <mapper resource="mapper/StuStateMapper.xml"/>
+        <mapper resource="mapper/GradeMapper.xml"/>
     </mappers>
 </configuration>

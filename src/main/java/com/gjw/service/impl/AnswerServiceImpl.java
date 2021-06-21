@@ -34,4 +34,10 @@ public class AnswerServiceImpl implements AnswerService {
     public List<Answer> checkRecovery(int eID, int sID) {
         return answerMapper.checkRecovery(eID, sID);
     }
+
+    @Override
+    public List<Answer> judgeAnswer(int eID, int sID) {
+        return answerMapper.judgeAnswer(eID, sID);
+    }
+
 }

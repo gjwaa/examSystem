@@ -9,7 +9,6 @@ import com.gjw.utils.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -58,8 +57,8 @@ public class ExamController {
     private AnswerService answerService;
 
     @Autowired
-    @Qualifier("stuStateServiceImpl")
-    private StuStateService stuStateService;
+    @Qualifier("gradeServiceImpl")
+    private GradeService gradeService;
 
 
     @RequestMapping("/showInfo")
@@ -353,7 +352,7 @@ public class ExamController {
     public void checkStuState(HttpServletResponse response) throws IOException {
         response.setContentType("text/text;charset=utf-8");
         response.setCharacterEncoding("UTF-8");
-        List<StuState> stuStates = stuStateService.queryAllStuState();
+        List<Grade> stuStates = gradeService.queryAllStuState();
 
 
         response.getWriter().print(JSONObject.toJSONString(stuStates));

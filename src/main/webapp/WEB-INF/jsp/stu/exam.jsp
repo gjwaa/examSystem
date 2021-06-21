@@ -25,6 +25,7 @@
     <script>
         $(function () {
 
+
             $.post({
                 url: '${pageContext.request.contextPath}/exam/checkExamState',
                 data: {
@@ -34,63 +35,46 @@
                 success: function (res) {
                     console.log(res)
                     if (res == '暂停考试') {
-                        $("#confirmExam").attr("class", "layui-btn layui-btn-disabled").attr("disabled", true)
+                        $("#handPaper").attr("class", "layui-btn layui-btn-disabled").attr("disabled", true)
                         $("input[type='checkbox']").attr("disabled", true);
                         $("input[type='radio']").attr("disabled", true);
                     }
                 }
             });
 
-            checkRecovery();
-            function checkRecovery(){
-                $.post({
-                    url: '${pageContext.request.contextPath}/exam/checkRecovery',
-                    data: {
-                        eID:${sessionScope.get("stuCheckInfo").getEID()},
-                        sID:${sessionScope.get("stuCheckInfo").getSID()}
-                    },
-                    dataType: 'json',
-                    success: function (res) {
-                        if (res.data != 'noAnswer') {
-                            var isAnswerNum = 0;
-                            for (let x in res.data) {
-                                // console.log(res.data[x].qNum)
-                                // console.log(res.data[x].answer)
-                                var qNum = res.data[x].qNum;
-                                var answer = (res.data[x].answer).replace(/,/g, '');
-                                if (answer.length == 1) {
-                                    $("#" + qNum).children("." + answer).attr("checked", "true");
-                                    $("#n" + qNum).css("background-color", "#009688");
-                                    // console.log(children)
-                                    isAnswerNum++;
-                                } else if (answer.length > 1) {
-                                    for (let x in answer) {
-                                        $("#" + qNum).children("." + answer[x]).attr("checked", "true");
-                                        $("#n" + qNum).css("background-color", "#009688");
-                                    }
-                                    isAnswerNum++;
-                                } else if (answer.length == 0) {
-                                    isAnswerNum--;
-                                }
-                            }
-                            $("#isAnswer").html("已答 " + isAnswerNum + " 题");
-                            $("#isNoAnswer").html("还剩 " + (${sessionScope.get('all').size()}-isAnswerNum) + " 题");
-                        }
-                    }
-                });
-            }
 
             $.post({
-                url: '${pageContext.request.contextPath}/exam/question',
+                url: '${pageContext.request.contextPath}/exam/checkRecovery',
                 data: {
-                    eID:${sessionScope.get("stuCheckInfo").getEID()}
+                    eID:${sessionScope.get("stuCheckInfo").getEID()},
+                    sID:${sessionScope.get("stuCheckInfo").getSID()}
                 },
-                dataType: 'text',
+                dataType: 'json',
                 success: function (res) {
-                    console.log(res)
-                    if (location.href.indexOf('#reloaded') == -1) {
-                        location.href = location.href + "#reloaded";
-                        location.reload();
+                    if (res.data != 'noAnswer') {
+                        var isAnswerNum = 0;
+                        for (let x in res.data) {
+                            // console.log(res.data[x].qNum)
+                            // console.log(res.data[x].answer)
+                            var qNum = res.data[x].qNum;
+                            var answer = (res.data[x].answer).replace(/,/g, '');
+                            if (answer.length == 1) {
+                                $("#" + qNum).children("." + answer).attr("checked", "true");
+                                $("#n" + qNum).css("background-color", "#009688");
+                                // console.log(children)
+                                isAnswerNum++;
+                            } else if (answer.length > 1) {
+                                for (let x in answer) {
+                                    $("#" + qNum).children("." + answer[x]).attr("checked", "true");
+                                    $("#n" + qNum).css("background-color", "#009688");
+                                }
+                                isAnswerNum++;
+                            } else if (answer.length == 0) {
+                                // isAnswerNum--;
+                            }
+                        }
+                        $("#isAnswer").html("已答 " + isAnswerNum + " 题");
+                        $("#isNoAnswer").html("还剩 " + (${sessionScope.get('all').size()}-isAnswerNum) + " 题");
                     }
                 }
             });
@@ -114,6 +98,7 @@
                 onClose(event);
             };
 
+
             function onMessage(event) {
                 var receiveMsg = JSON.parse(event.data)
                 if (receiveMsg.info == 'showTime') {
@@ -126,9 +111,17 @@
 
                 if (receiveMsg.info == 'pauseExam') {
                     alert("考试已暂停")
-                    $("#confirmExam").attr("class", "layui-btn layui-btn-disabled").attr("disabled", true)
+                    changeState("暂停考试")
+                    $("#handPaper").attr("class", "layui-btn layui-btn-disabled").attr("disabled", true)
                     $("input[type='checkbox']").attr("disabled", true);
                     $("input[type='radio']").attr("disabled", true);
+                }
+
+                if (receiveMsg.info == 'startExam') {
+                    changeState("考试中")
+                    $("#handPaper").attr("class", "layui-btn").removeAttr("disabled")
+                    $("input[type='checkbox']").removeAttr("disabled");
+                    $("input[type='radio']").removeAttr("disabled");
                 }
 
             }
@@ -140,7 +133,7 @@
                     data:${sessionScope.get("stuCheckInfo").getSID()}
                 };
                 webSocket.send(JSON.stringify(msg));
-                changeState("正在考试");
+                changeState("考试中");
             }
 
             function onError(event) {
@@ -149,7 +142,12 @@
             }
 
             function onClose(event) {
-                // webSocket.send("stuExamIng");
+                // alert("123")
+                <%--var msg = {--%>
+                <%--    info: "closeExam",--%>
+                <%--    data:${sessionScope.get("stuCheckInfo").getSID()}--%>
+                <%--};--%>
+                <%--webSocket.send(JSON.stringify(msg));--%>
             }
 
             function changeState(state) {
@@ -169,7 +167,9 @@
             }
 
             $("input[type=checkbox]").click(function () {
-                checkNum()
+                <%--var num = getNum();--%>
+                <%--$("#isAnswer").html("已答 " + num + " 题");--%>
+                <%--$("#isNoAnswer").html("还剩 " + (${sessionScope.get('all').size()}-num) + " 题");--%>
                 var mName = $(this).attr("name");
                 var mNum = mName.replace(/[^0-9]/ig, "");
                 var id = "#n" + mNum;
@@ -189,9 +189,8 @@
 
             });
 
+
             $("input[type=radio]").click(function () {
-                // var begin = $("input[type=checkbox]");
-                // var i = begin.length;
 
                 var sName = $(this).attr("name");
                 var sNum = sName.replace(/[^0-9]/ig, "");
@@ -201,13 +200,36 @@
                     $(id).css("background-color", "#009688");
                     doRadio($(this));
                 }
-
+                <%--var num = getNum();--%>
+                <%--$("#isAnswer").html("已答 " + num + " 题");--%>
+                <%--$("#isNoAnswer").html("还剩 " + (${sessionScope.get('all').size()}-num) + " 题");--%>
             })
 
-            function checkNum(){
-                var len = $("input:checkbox:checked").length;
-                alert(len)
+            function getNum() {
+                var len = 0;
+                $.post({
+                    url: '${pageContext.request.contextPath}/exam/checkRecovery',
+                    async: false,
+                    data: {
+                        eID:${sessionScope.get("stuCheckInfo").getEID()},
+                        sID:${sessionScope.get("stuCheckInfo").getSID()}
+                    },
+                    dataType: 'json',
+                    success: function (res) {
+                        console.log(res.data)
+                        if (res.data != 'noAnswer') {
+                            len = res.data.length;
+                            // for (let x in res.data) {
+                            //     if (res.data[x].answer.length > 0) {
+                            //         len++;
+                            //     }
+                            // }
+                        }
+                    }
+                });
+                return len;
             }
+
 
             function doCheckBox(answer, qNum) {
                 $.post({
@@ -240,6 +262,20 @@
                     }
                 });
             };
+
+            $("#handPaper").click(function () {
+                $.post({
+                    url: '${pageContext.request.contextPath}/stuExam/handPaper',
+                    data: {
+                        eID:${sessionScope.get("stuCheckInfo").getEID()},
+                        sID:${sessionScope.get("stuCheckInfo").getSID()},
+                    },
+                    dataType: 'text',
+                    success: function (res) {
+                        console.log(res)
+                    }
+                });
+            });
 
 
         });
@@ -340,7 +376,7 @@
                             <label>共${sessionScope.get('all').size()}题</label>&nbsp;&nbsp;
                             <label id="isAnswer">已答&nbsp;&nbsp;题</label>&nbsp;&nbsp;
                             <label id="isNoAnswer">还剩&nbsp;&nbsp;题</label><br><br>
-                            <button class="layui-btn" id="confirmExam">交&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;卷
+                            <button class="layui-btn" id="handPaper">交&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;卷
                             </button>
                         </div>
                     </div>

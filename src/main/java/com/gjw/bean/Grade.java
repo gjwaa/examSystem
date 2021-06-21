@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StuState {
+public class Grade {
 
-    private int ssID;
+    private int gID;
     private int sID;
     private int eID;
     private String state;
-
+    private int stuGrade;
 
 }

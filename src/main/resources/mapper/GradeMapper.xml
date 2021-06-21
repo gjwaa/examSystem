@@ -2,31 +2,38 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gjw.mapper.StuStateMapper">
+<mapper namespace="com.gjw.mapper.GradeMapper">
 
     <select id="checkState" resultType="String">
         select state
-        from stustate
+        from grade
         where eID = #{eID}
           and sID = #{sID}
     </select>
 
     <insert id="insertState">
-        insert into stustate (eID, sID, state)
+        insert into grade (eID, sID, state)
         values (#{eID}, #{sID}, #{state})
     </insert>
 
     <update id="updateState">
-        update stustate
+        update grade
         set state = #{state}
         where eID = #{eID}
           and sID = #{sID}
     </update>
 
-    <select id="queryAllStuState" resultType="StuState">
+    <select id="queryAllStuState" resultType="Grade">
         select *
-        from stustate
+        from grade
     </select>
+
+    <update id="updateGrade">
+        update grade
+        set stuGrade = #{stuGrade}
+        where eID = #{eID}
+          and sID = #{sID}
+    </update>
 
 
 </mapper>

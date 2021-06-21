@@ -14,6 +14,7 @@ public class Answer {
     private String qNum;
     private int sID;
     private String answer;
+    private Question question;
 
 
 }

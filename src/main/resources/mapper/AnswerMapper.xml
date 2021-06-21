@@ -32,5 +32,29 @@
           and sID = #{sID}
     </select>
 
+    <select id="judgeAnswer" resultMap="answerQuestionVo">
+        SELECT a.qNum, q.qScore
+        from answer a,
+             question q
+        where a.eID = q.eID
+          and a.qNum = q.qNum
+          and a.answer = q.qAnswer
+          and a.sID = #{sID}
+          and q.eID = #{eID}
+    </select>
+    <resultMap id="answerQuestionVo" type="Answer">
+<!--        <result column="eID" property="eID"/>-->
+        <result column="qNum" property="qNum"/>
+<!--        <result column="answer" property="answer"/>-->
+<!--        <result column="sID" property="sID"/>-->
+        <association property="question" javaType="Question">
+<!--            <result column="eID" property="eID"/>-->
+<!--            <result column="qNum" property="qNum"/>-->
+<!--            <result column="qAnswer" property="qAnswer"/>-->
+            <result column="qScore" property="qScore"/>
+        </association>
+
+    </resultMap>
+
 
 </mapper>

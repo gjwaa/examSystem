@@ -1,11 +1,12 @@
 package com.gjw.service;
 
 
-import com.gjw.bean.StuState;
+import com.gjw.bean.Grade;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface StuStateService {
+public interface GradeService {
 
     String checkState(int eID, int sID);
 
@@ -13,6 +14,8 @@ public interface StuStateService {
 
     int updateState(int eID, int sID, String state);
 
-    List<StuState> queryAllStuState();
+    List<Grade> queryAllStuState();
+
+    int updateGrade(int eID,int sID,int stuGrade);
 
 }
