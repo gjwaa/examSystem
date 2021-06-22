@@ -60,9 +60,9 @@
                         });
                         $("#stuList").children().remove();
                         for (let i = 0; i < stuNum; i++) {
-                            var div = '<div class="layui-inline" style="border: #eee 1px solid;margin: 20px 50px" id="">' + '<input type="checkbox" name="" value="" lay-skin="primary"><br>'
+                            var div = '<div class="layui-inline" style="border: #eee 1px solid;margin: 20px 50px" id="">' + '<input type="checkbox" name="' + 'stuCheckBox' + '"value="' + res.data[i].sID + '"lay-skin="primary"><br>'
                                 + '<label>准考证号：' + res.data[i].aNumber + '</label><br>' + '<label>姓名：' + res.data[i].sName + '</label><br>'
-                                + '<label>状态：</label>' + '<label id="' + res.data[i].sID + '">' + '等待登录</label><br>' + '<label>成绩：</label>' + '<label>无</label>' + '</div>';
+                                + '<label>状态：</label>' + '<label class="examState" id="' + res.data[i].sID + '">' + '等待登录</label><br>' + '<label>成绩：</label>' + '<label>无</label>' + '</div>';
                             $("#stuList").append(div);
 
                         }
@@ -91,7 +91,10 @@
         function onMessage(event) {
             var receiveMsg = JSON.parse(event.data)
             if (receiveMsg.info == 'stuExamIng') {
-                $("#" + receiveMsg.data).html("考试中")
+                $("#" + receiveMsg.data).html("考试中");
+            }
+            if (receiveMsg.info == 'isHandPaper') {
+                $("#" + receiveMsg.data).html("已交卷");
             }
 
         }
@@ -134,7 +137,6 @@
                 },
                 dataType: "text",
                 success: function (res) {
-                    //如果已经开始状态，禁按钮...未做
                     if (res == '考试中') {
                         $("#startExam").attr("class", "layui-btn layui-btn-disabled").attr("disabled", "disabled");
                         startFun();
@@ -174,7 +176,7 @@
                     dataType: "text",
                     success: function (res) {
                         if (res == 'start') {
-                            startExam();
+                            startExam();//socket
                             $("#stateLabel").text('考试状态：考试中');
                             getTime();
                         }
@@ -183,9 +185,14 @@
             }
 
             $("#startExam").click(function () {
-                startFun();
-                $("#startExam").attr("class", "layui-btn layui-btn-disabled").attr("disabled", "disabled");
-                $("#pauseExam").attr("class", "layui-btn").removeAttr("disabled");
+                layer.confirm('是否开始考试', {
+                    btn: ['是', '否'] //按钮
+                }, function () {
+                    startFun();
+                    $("#startExam").attr("class", "layui-btn layui-btn-disabled").attr("disabled", "disabled");
+                    $("#pauseExam").attr("class", "layui-btn").removeAttr("disabled");
+                    layer.msg('考试已开始', {icon: 1});
+                });
             });
 
             function getTime() {
@@ -196,7 +203,8 @@
                     },
                     dataType: "text",
                     success: function (res) {
-                        countDown(res)
+                        // alert('getTime:' + res);
+                        countDown(res);
                     }
                 });
             };
@@ -204,6 +212,7 @@
             var timer = null;
 
             function countDown(times) {
+                // alert("countDown:" + times)
                 timer = setInterval(function () {
                     var hour = 0,
                         minute = 0,
@@ -216,7 +225,11 @@
                     if (hour <= 9) hour = '0' + hour;
                     if (minute <= 9) minute = '0' + minute;
                     if (second <= 9) second = '0' + second;
-                    setRestTime(hour * 60 * 60 + minute * 60 + second);
+                    var h = hour * 60 * 60;
+                    var m = minute * 60;
+                    var s = second;
+                    // console.log(h + ":" + m + ":" + s)
+                    setRestTime(parseInt(h) + parseInt(m) + parseInt(s));
                     var show = hour + "小时：" + minute + "分钟：" + second + "秒"
                     var wsMsg = {
                         info: "showTime",
@@ -233,6 +246,10 @@
 
 
             function setRestTime(time) {
+                if (time > 8000) {
+                    alert(time);
+                    alert("问题在这！");
+                }
                 $.post({
                     url: "${pageContext.request.contextPath}/exam/setRestTime",
                     data: {
@@ -248,24 +265,94 @@
 
 
             $("#pauseExam").click(function () {
-                $("#pauseExam").attr("class", "layui-btn layui-btn-disabled").attr("disabled", "disabled");
-                $("#startExam").attr("class", "layui-btn").removeAttr("disabled");
-                $.post({
-                    url: "${pageContext.request.contextPath}/exam/pauseExam",
-                    dataType: "text",
-                    success: function (res) {
-                        if (res == 'pause') {
-                            clearInterval(timer);
-                            $("#stateLabel").text('考试状态：暂停考试');
-                            var pauseMsg = {
-                                info: "pauseExam",
-                                data: "all"
+                layer.confirm('是否暂停考试', {
+                    btn: ['是', '否'] //按钮
+                }, function () {
+                    $("#pauseExam").attr("class", "layui-btn layui-btn-disabled").attr("disabled", "disabled");
+                    $("#startExam").attr("class", "layui-btn").removeAttr("disabled");
+                    $.post({
+                        url: "${pageContext.request.contextPath}/exam/pauseExam",
+                        dataType: "text",
+                        success: function (res) {
+                            if (res == 'pause') {
+                                clearInterval(timer);
+                                $("#stateLabel").text('考试状态：暂停考试');
+                                $(".examState").text("暂停考试")
+                                var pauseMsg = {
+                                    info: "pauseExam",
+                                    data: "all"
+                                }
+                                webSocket.send(JSON.stringify(pauseMsg));
                             }
-                            webSocket.send(JSON.stringify(pauseMsg));
                         }
+                    });
+                    layer.msg('考试已暂停', {icon: 1});
+                });
+
+            });
+
+            $("#compulsorySubmit").click(function () {
+                layer.confirm('是否强制交卷', {
+                    btn: ['是', '否'] //按钮
+                }, function () {
+                    if ($("input[type='checkbox']:checked").length != 0) {
+                        var msg = {
+                            info: "compulsorySubmit",
+                            data: ""
+                        };
+                        selectStu(msg)
+                        layer.msg('已强制交卷', {icon: 1});
+                    } else {
+                        layer.msg('请选择要提交的考生', {icon: 2});
+                    }
+                });
+
+            });
+
+            $("#cheat").click(function () {
+                layer.confirm('是否提交作弊', {
+                    btn: ['是', '否'] //按钮
+                }, function () {
+                    if ($("input[type='checkbox']:checked").length != 0) {
+                        var msg = {
+                            info: "cheatSubmit",
+                            data: ""
+                        };
+                        selectStu(msg)
+                        layer.msg('已提交作弊', {icon: 1});
+                    } else {
+                        layer.msg('请选择要提交作弊的考生', {icon: 2});
                     }
                 });
             });
+
+            $("#violation").click(function () {
+                layer.confirm('是否提交违纪', {
+                    btn: ['是', '否'] //按钮
+                }, function () {
+                    if ($("input[type='checkbox']:checked").length != 0) {
+                        var msg = {
+                            info: "violation",
+                            data: ""
+                        };
+                        selectStu(msg)
+                        layer.msg('已提交违纪', {icon: 1});
+                    } else {
+                        layer.msg('请选择要提交违纪的考生', {icon: 2});
+                    }
+                });
+            });
+
+            $("#exportRes").click(function () {
+                $(location).attr("href", "${pageContext.request.contextPath}/exam/examResPaper");
+            });
+
+            function selectStu(msg) {
+                $("input[type='checkbox']:checked").each(function () {
+                    msg.data += $(this).val() + ','
+                });
+                webSocket.send(JSON.stringify(msg));
+            }
 
 
         });

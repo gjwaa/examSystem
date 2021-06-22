@@ -9,6 +9,7 @@ import com.gjw.utils.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -312,6 +313,7 @@ public class ExamController {
         map.put("eID", examInfo.getEID());
         map.put("state", "暂停考试");
         recordService.updateRecordStateByEID(map);
+        gradeService.updateAllState(examInfo.getEID(), "暂停考试");
         response.getWriter().print("pause");
     }
 
@@ -353,10 +355,25 @@ public class ExamController {
         response.setContentType("text/text;charset=utf-8");
         response.setCharacterEncoding("UTF-8");
         List<Grade> stuStates = gradeService.queryAllStuState();
-
-
         response.getWriter().print(JSONObject.toJSONString(stuStates));
 
+    }
+
+    @RequestMapping("examResPaper")
+    public String examResPaper() {
+        return "examRes";
+    }
+
+    @RequestMapping("examRes/{eID}")
+    @ResponseBody
+    public String examRes(@PathVariable("eID") int eID,int page,int limit) {
+        System.out.println(page + "," + limit + "," + eID);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code", 0);
+        jsonObject.put("msg", "table-ok");
+        jsonObject.put("count", "");
+        jsonObject.put("data", "");
+        return jsonObject.toString();
     }
 
 

@@ -139,7 +139,7 @@ public class StuExamController {
     }
 
     @RequestMapping("handPaper")
-    public void handPaper(HttpServletResponse response, int eID, int sID) {
+    public void handPaper(HttpServletResponse response, int eID, int sID, String state) throws IOException {
         response.setContentType("text/text;charset=utf-8");
         response.setCharacterEncoding("UTF-8");
         List<Answer> answers = answerService.judgeAnswer(eID, sID);
@@ -147,9 +147,25 @@ public class StuExamController {
         for (Answer answer : answers) {
             point += Integer.valueOf(answer.getQuestion().getQScore());
         }
-        gradeService.updateGrade(eID, sID, point);
-        //状态改成已交卷
+        if (state.equals("normal") || state.equals("force")) {
+            gradeService.updateGrade(eID, sID, point);
+            if (gradeService.queryState(eID, sID).equals("违纪")) {
+                gradeService.updateState(eID, sID, "违纪");
+            } else {
+                gradeService.updateState(eID, sID, "已交卷");
+            }
 
+        }
+        if (state.equals("cheat")) {
+            gradeService.updateGrade(eID, sID, 0);
+            gradeService.updateState(eID, sID, "作弊");
+        }
+        if (state.equals("violation")) {
+            gradeService.updateGrade(eID, sID, point);
+            gradeService.updateState(eID, sID, "违纪");
+        }
+
+        response.getWriter().print("isHandPaper");
     }
 
 

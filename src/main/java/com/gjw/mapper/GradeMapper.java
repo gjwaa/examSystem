@@ -17,6 +17,10 @@ public interface GradeMapper {
 
     List<Grade> queryAllStuState();
 
-    int updateGrade(@Param("eID") int eID, @Param("sID") int sID,@Param("stuGrade") int stuGrade);
+    int updateGrade(@Param("eID") int eID, @Param("sID") int sID, @Param("stuGrade") int stuGrade);
+
+    int updateAllState(@Param("eID") int eID, @Param("state") String state);
+
+    String queryState(@Param("eID") int eID, @Param("sID") int sID);
 
 }

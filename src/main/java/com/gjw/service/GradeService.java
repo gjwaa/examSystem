@@ -18,4 +18,8 @@ public interface GradeService {
 
     int updateGrade(int eID,int sID,int stuGrade);
 
+    int updateAllState(int eID,String state);
+
+    String queryState(int eID,int sID);
+
 }

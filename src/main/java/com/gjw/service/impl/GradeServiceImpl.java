@@ -39,5 +39,15 @@ public class GradeServiceImpl implements GradeService {
         return gradeMapper.updateGrade(eID, sID, stuGrade);
     }
 
+    @Override
+    public int updateAllState(int eID, String state) {
+        return gradeMapper.updateAllState(eID, state);
+    }
+
+    @Override
+    public String queryState(int eID, int sID) {
+        return gradeMapper.queryState(eID, sID);
+    }
+
 
 }

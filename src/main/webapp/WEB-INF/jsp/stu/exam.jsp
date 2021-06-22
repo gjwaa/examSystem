@@ -25,7 +25,6 @@
     <script>
         $(function () {
 
-
             $.post({
                 url: '${pageContext.request.contextPath}/exam/checkExamState',
                 data: {
@@ -124,6 +123,40 @@
                     $("input[type='radio']").removeAttr("disabled");
                 }
 
+                if (receiveMsg.info == 'compulsorySubmit') {
+                    var stuID = (receiveMsg.data).substr(0, (receiveMsg.data).length - 1);
+                    var arr = (stuID).split(",")
+                    for (let x in arr) {
+                        if (arr[x] ==${sessionScope.get("stuCheckInfo").getSID()}) {
+                            handPaper("force");
+                            alert("已被强制交卷")
+                        }
+                    }
+                }
+
+                if (receiveMsg.info == 'cheatSubmit') {
+                    var stuID = (receiveMsg.data).substr(0, (receiveMsg.data).length - 1);
+                    var arr = (stuID).split(",")
+                    for (let x in arr) {
+                        if (arr[x] ==${sessionScope.get("stuCheckInfo").getSID()}) {
+                            handPaper("cheat");
+                            alert("你作弊被抓了")
+                        }
+                    }
+                }
+
+                if (receiveMsg.info == 'violation') {
+                    var stuID = (receiveMsg.data).substr(0, (receiveMsg.data).length - 1);
+                    var arr = (stuID).split(",")
+                    for (let x in arr) {
+                        if (arr[x] ==${sessionScope.get("stuCheckInfo").getSID()}) {
+                            handPaper("violation");
+                            alert("违纪警告")
+                        }
+                    }
+                }
+
+
             }
 
             function onOpen(event) {
@@ -149,6 +182,7 @@
                 <%--};--%>
                 <%--webSocket.send(JSON.stringify(msg));--%>
             }
+
 
             function changeState(state) {
                 $.post({
@@ -264,19 +298,32 @@
             };
 
             $("#handPaper").click(function () {
+                handPaper("normal")
+                alert("已交卷")
+            });
+
+            function handPaper(state) {
                 $.post({
                     url: '${pageContext.request.contextPath}/stuExam/handPaper',
                     data: {
                         eID:${sessionScope.get("stuCheckInfo").getEID()},
                         sID:${sessionScope.get("stuCheckInfo").getSID()},
+                        state: state
                     },
                     dataType: 'text',
                     success: function (res) {
                         console.log(res)
+                        if (res == 'isHandPaper') {
+                            var msg = {
+                                info: res,
+                                data:${sessionScope.get("stuCheckInfo").getSID()}
+                            };
+                            webSocket.send(JSON.stringify(msg));
+
+                        }
                     }
                 });
-            });
-
+            }
 
         });
 

@@ -35,5 +35,18 @@
           and sID = #{sID}
     </update>
 
+    <update id="updateAllState">
+        update grade
+        set state = #{state}
+        where eID = #{eID}
+    </update>
+
+    <select id="queryState" resultType="String">
+        select state
+        from grade
+        where eID = #{eID}
+          and sID = #{sID}
+    </select>
+
 
 </mapper>
