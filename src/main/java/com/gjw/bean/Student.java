@@ -22,6 +22,7 @@ public class Student {
     private String sSex;
     private int sAge;
     private ExamInfo examInfo;
+    private Grade grade;
 
 
 }

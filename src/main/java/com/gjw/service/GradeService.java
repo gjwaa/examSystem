@@ -2,6 +2,7 @@ package com.gjw.service;
 
 
 import com.gjw.bean.Grade;
+import com.gjw.bean.Student;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -16,10 +17,14 @@ public interface GradeService {
 
     List<Grade> queryAllStuState();
 
-    int updateGrade(int eID,int sID,int stuGrade);
+    int updateGrade(int eID, int sID, int stuGrade);
 
-    int updateAllState(int eID,String state);
+    int updateAllState(int eID, String state);
 
-    String queryState(int eID,int sID);
+    String queryState(int eID, int sID);
+
+    int insertAllStu(List<Grade> list);
+
+    int queryCount(int eID);
 
 }

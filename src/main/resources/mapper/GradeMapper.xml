@@ -48,5 +48,23 @@
           and sID = #{sID}
     </select>
 
+    <insert id="insertAllStu" parameterType="java.util.List">
+        insert ignore into grade (sID, eID, state)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.sID},
+            #{item.eID},
+            #{item.state}
+            )
+        </foreach>
+    </insert>
+
+    <select id="queryCount" resultType="int">
+        select count(*)
+        from grade
+        where eID = #{eID}
+    </select>
+
 
 </mapper>

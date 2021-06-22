@@ -25,13 +25,33 @@
                 , url: '${pageContext.request.contextPath}/exam/examRes/${sessionScope.examInfo.EID}'//restful
                 , cellMinWidth: 80
                 , cols: [[
-                    , {field: '', title: '准考证号', width: '10%', sort: true, align: 'center'}
-                    , {field: '', title: '考生姓名', width: '30%', align: 'center'}
-                    , {field: '', title: '考试科目', align: 'center'}
-                    , {field: '', title: '科目名称', width: '28%', align: 'center'}
-                    , {field: '', title: '工种', align: 'center'}
-                    , {field: '', title: '等级', align: 'center'}
-                    , {field: '', title: '成绩', align: 'center'}
+                    {field: 'aNumber', title: '准考证号', sort: true, align: 'center'}
+                    , {field: 'sName', title: '考生姓名', align: 'center'}
+                    , {
+                        field: 'eName', title: '考试科目', align: 'center', templet: function (ExamInfo) {
+                            return ExamInfo.examInfo.eName;
+                        }
+                    }
+                    , {
+                        field: 'courseName', title: '科目名称', align: 'center', templet: function (ExamInfo) {
+                            return ExamInfo.examInfo.courseName;
+                        }
+                    }
+                    , {
+                        field: 'eWork', title: '工种', align: 'center', templet: function (ExamInfo) {
+                            return ExamInfo.examInfo.eWork;
+                        }
+                    }
+                    , {
+                        field: 'eLevel', title: '等级', align: 'center', templet: function (ExamInfo) {
+                            return ExamInfo.examInfo.eLevel;
+                        }
+                    }
+                    , {
+                        field: 'stuGrade', title: '成绩', align: 'center', templet: function (Grade) {
+                            return Grade.grade.stuGrade;
+                        }
+                    }
                 ]]
                 , parseData: function (res) {
                     console.log(res.data)
@@ -53,6 +73,7 @@
         <legend>参考人员总成绩列表</legend>
         <div class="layui-field-box">
             <table class="layui-hide" id="resTable"></table>
+            <div style="text-align: center"><button class="layui-btn">导出成绩</button></div>
         </div>
     </fieldset>
 

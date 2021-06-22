@@ -1,5 +1,6 @@
 package com.gjw.service;
 
+import com.gjw.bean.Grade;
 import com.gjw.bean.Student;
 
 import java.util.List;
@@ -12,5 +13,7 @@ public interface StudentService {
     int queryStudentCountByEID(int eID);
 
     Student checkLogin(Map map);
+
+    List<Grade> queryAllSID(int eID);
 
 }

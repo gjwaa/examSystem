@@ -41,4 +41,6 @@ public interface ExamInfoMapper {
 
     String queryTContent(String tType);
 
+    List<Student> queryExamRes(@Param("eID") int eID,@Param("page") int page,@Param("limit") int limit);
+
 }

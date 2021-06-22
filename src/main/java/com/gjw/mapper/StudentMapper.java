@@ -1,5 +1,6 @@
 package com.gjw.mapper;
 
+import com.gjw.bean.Grade;
 import com.gjw.bean.Student;
 import org.springframework.stereotype.Repository;
 
@@ -15,6 +16,6 @@ public interface StudentMapper {
 
     Student checkLogin(Map map);
 
-
+    List<Grade> queryAllSID(int eID);
 
 }

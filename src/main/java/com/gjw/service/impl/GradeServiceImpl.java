@@ -49,5 +49,15 @@ public class GradeServiceImpl implements GradeService {
         return gradeMapper.queryState(eID, sID);
     }
 
+    @Override
+    public int insertAllStu(List<Grade> list) {
+        return gradeMapper.insertAllStu(list);
+    }
+
+    @Override
+    public int queryCount(int eID) {
+        return gradeMapper.queryCount(eID);
+    }
+
 
 }

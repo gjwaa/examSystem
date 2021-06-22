@@ -28,7 +28,7 @@
     </delete>
 
     <select id="queryAllStuByEIDLimit" resultMap="stuVo">
-        SELECT s.sID,s.sName, s.IDCard, s.aNumber, e.eName, e.eLevel
+        SELECT s.sID, s.sName, s.IDCard, s.aNumber, e.eName, e.eLevel
         FROM student s,
              examinfo e
         WHERE s.eID = e.eID
@@ -95,5 +95,26 @@
         where tType = #{tType}
     </select>
 
+    <select id="queryExamRes" resultMap="resVo">
+        SELECT s.aNumber, s.sName, e.eName, e.courseName, e.eWork, e.eLevel, g.stuGrade
+        FROM student s
+                 INNER JOIN grade g on s.sID = g.sID
+                 LEFT JOIN examinfo e ON g.eID = e.eID
+        where e.eID = #{eID}
+        limit #{page},#{limit}
+    </select>
+    <resultMap id="resVo" type="Student">
+        <result column="aNumber" property="aNumber"/>
+        <result column="sName" property="sName"/>
+        <association property="examInfo" javaType="ExamInfo">
+            <result column="eName" property="eName"/>
+            <result column="courseName" property="courseName"/>
+            <result column="eWork" property="eWork"/>
+            <result column="eLevel" property="eLevel"/>
+        </association>
+        <association property="grade" javaType="Grade">
+            <result column="stuGrade" property="stuGrade"/>
+        </association>
+    </resultMap>
 
 </mapper>

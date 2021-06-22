@@ -178,6 +178,13 @@ public class ExamController {
         if (i <= 0) {
             questionService.insertQuestion(allList);
         }
+        List<Grade> grades = studentService.queryAllSID(examInfoByDB.getEID());
+        List<Grade> gradeList = new ArrayList<Grade>();
+        for (Grade grade : grades) {
+            grade.setState("等待考试");
+            gradeList.add(grade);
+        }
+        gradeService.insertAllStu(gradeList);
 
 
         return "examManage";
@@ -366,13 +373,17 @@ public class ExamController {
 
     @RequestMapping("examRes/{eID}")
     @ResponseBody
-    public String examRes(@PathVariable("eID") int eID,int page,int limit) {
-        System.out.println(page + "," + limit + "," + eID);
+    public String examRes(@PathVariable("eID") int eID, int page, int limit) {
+
+        page = (page - 1) * limit;
+        int count = gradeService.queryCount(eID);
+        List<Student> examRes = examInfoService.queryExamRes(eID, page, limit);
+        System.err.println(examRes);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("code", 0);
         jsonObject.put("msg", "table-ok");
-        jsonObject.put("count", "");
-        jsonObject.put("data", "");
+        jsonObject.put("count", count);
+        jsonObject.put("data", examRes);
         return jsonObject.toString();
     }
 

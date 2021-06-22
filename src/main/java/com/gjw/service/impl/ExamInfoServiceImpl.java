@@ -79,4 +79,9 @@ public class ExamInfoServiceImpl implements ExamInfoService {
     public String queryTContent(String tType) {
         return examInfoMapper.queryTContent(tType);
     }
+
+    @Override
+    public List<Student> queryExamRes(int eID, int page, int limit) {
+        return examInfoMapper.queryExamRes(eID, page, limit);
+    }
 }

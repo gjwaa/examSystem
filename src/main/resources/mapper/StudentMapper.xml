@@ -26,7 +26,15 @@
     </select>
 
     <select id="checkLogin" parameterType="Map" resultMap="stuVo">
-        select s.eID,s.sID,s.aNumber, s.sName, s.IDCard, e.eWork, e.eLevel, e.courseID, e.courseName
+        select s.eID,
+               s.sID,
+               s.aNumber,
+               s.sName,
+               s.IDCard,
+               e.eWork,
+               e.eLevel,
+               e.courseID,
+               e.courseName
         from examinfo e,
              student s
         where e.eName = #{eName}
@@ -47,6 +55,11 @@
             <result column="courseName" property="courseName"/>
         </association>
     </resultMap>
+
+    <select id="queryAllSID" parameterType="int" resultType="Grade">
+        select sID,eID
+        from student where eID=#{eID}
+    </select>
 
 
 </mapper>

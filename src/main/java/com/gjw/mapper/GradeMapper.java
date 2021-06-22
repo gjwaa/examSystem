@@ -23,4 +23,8 @@ public interface GradeMapper {
 
     String queryState(@Param("eID") int eID, @Param("sID") int sID);
 
+    int insertAllStu(List<Grade> list);
+
+    int queryCount(int eID);
+
 }

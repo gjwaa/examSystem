@@ -38,4 +38,6 @@ public interface ExamInfoService {
 
     String queryTContent(String tType);
 
+    List<Student> queryExamRes(int eID, int page, int limit);
+
 }

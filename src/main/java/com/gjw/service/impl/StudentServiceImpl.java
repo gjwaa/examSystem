@@ -1,6 +1,7 @@
 package com.gjw.service.impl;
 
 
+import com.gjw.bean.Grade;
 import com.gjw.bean.Student;
 import com.gjw.mapper.StudentMapper;
 import com.gjw.service.StudentService;
@@ -30,5 +31,10 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student checkLogin(Map map) {
         return studentMapper.checkLogin(map);
+    }
+
+    @Override
+    public List<Grade> queryAllSID(int eID) {
+        return studentMapper.queryAllSID(eID);
     }
 }
