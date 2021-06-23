@@ -40,4 +40,6 @@ public interface ExamInfoService {
 
     List<Student> queryExamRes(int eID, int page, int limit);
 
+    List<Student> queryAllExamRes(int eID);
+
 }

@@ -220,7 +220,7 @@
                 } else if (!$("input[name='" + mName + "']").is(":checked")) {
                     $(id).css("background-color", "white")
                 }
-
+                checkBgColor();
             });
 
 
@@ -234,10 +234,24 @@
                     $(id).css("background-color", "#009688");
                     doRadio($(this));
                 }
+                checkBgColor();
                 <%--var num = getNum();--%>
                 <%--$("#isAnswer").html("已答 " + num + " 题");--%>
                 <%--$("#isNoAnswer").html("还剩 " + (${sessionScope.get('all').size()}-num) + " 题");--%>
             })
+
+            function checkBgColor() {
+                var count = 0;
+                $("[name='tab']").each(function () {
+                    if ($(this).css('background-color') == 'rgb(0, 150, 136)') {
+                        count++;
+                    }
+                });
+
+                var all = $("#allAnswer").text().replaceAll(/([^\u0000-\u00FF])/g, "");
+                $("#isAnswer").text('已答 ' + count + ' 题');
+                $("#isNoAnswer").text('还剩 ' + (parseInt(all) - count) + ' 题')
+            }
 
             function getNum() {
                 var len = 0;
@@ -300,6 +314,7 @@
             $("#handPaper").click(function () {
                 handPaper("normal")
                 alert("已交卷")
+
             });
 
             function handPaper(state) {
@@ -319,13 +334,14 @@
                                 data:${sessionScope.get("stuCheckInfo").getSID()}
                             };
                             webSocket.send(JSON.stringify(msg));
-
+                            $(location).attr("href","${pageContext.request.contextPath}/stuExam/grade/${sessionScope.stuCheckInfo.EID}")
                         }
                     }
                 });
             }
 
-        });
+        })
+        ;
 
 
     </script>
@@ -408,10 +424,10 @@
                         <label id="restTime">剩余时间：2:00:00</label><br><br>
                         <label>题目导航栏</label><br>
                         <div class="layui-form">
-                            <table class="layui-table" id="answertable">
+                            <table class="layui-table" id="answerTable">
                                 <tbody>
                                 <c:forEach items="${sessionScope.get('all')}" var="question" varStatus="i">
-                                    <td id="n${question.getQNum()}">${question.getQNum()}</td>
+                                    <td id="n${question.getQNum()}" name="tab">${question.getQNum()}</td>
                                     <c:if test="${(i.index+1)%5==0}">
                                         <tr></tr>
                                     </c:if>
@@ -420,7 +436,7 @@
                             </table>
                         </div>
                         <div style="text-align: center">
-                            <label>共${sessionScope.get('all').size()}题</label>&nbsp;&nbsp;
+                            <label id="allAnswer">共${sessionScope.get('all').size()}题</label>&nbsp;&nbsp;
                             <label id="isAnswer">已答&nbsp;&nbsp;题</label>&nbsp;&nbsp;
                             <label id="isNoAnswer">还剩&nbsp;&nbsp;题</label><br><br>
                             <button class="layui-btn" id="handPaper">交&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;卷

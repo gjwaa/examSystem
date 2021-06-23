@@ -43,4 +43,6 @@ public interface ExamInfoMapper {
 
     List<Student> queryExamRes(@Param("eID") int eID,@Param("page") int page,@Param("limit") int limit);
 
+    List<Student> queryAllExamRes(int eID);
+
 }

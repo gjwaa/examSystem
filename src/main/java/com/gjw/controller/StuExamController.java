@@ -168,5 +168,12 @@ public class StuExamController {
         response.getWriter().print("isHandPaper");
     }
 
+    @RequestMapping("grade/{eID}")
+    private String grade(HttpSession session, @PathVariable("eID") int eID) {
+        List<Student> list = examInfoService.queryAllExamRes(eID);
+        session.setAttribute("examGrade", list);
+        return "stu/grade";
+    }
+
 
 }

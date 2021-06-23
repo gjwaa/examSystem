@@ -4,8 +4,14 @@ package com.gjw.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.gjw.bean.*;
 import com.gjw.service.*;
+import com.gjw.utils.DateUtils;
 import com.gjw.utils.ExcelUtil;
 import com.gjw.utils.StrUtil;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.xmlbeans.impl.regex.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -16,14 +22,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.beans.IntrospectionException;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -385,6 +387,48 @@ public class ExamController {
         jsonObject.put("count", count);
         jsonObject.put("data", examRes);
         return jsonObject.toString();
+    }
+
+
+    @RequestMapping("/outPut/{eID}")
+    public void outPut(HttpServletResponse response, @PathVariable("eID") int eID) throws IOException {
+        response.setCharacterEncoding("UTF-8");
+        List<Student> list = examInfoService.queryAllExamRes(eID);
+        System.out.println(list);
+        //创建excel文件
+        HSSFWorkbook wb = new HSSFWorkbook();
+        //创建sheet页
+        HSSFSheet sheet = wb.createSheet("参考人员成绩表");
+
+        //创建标题行
+        HSSFRow titleRow = sheet.createRow(0);
+        titleRow.createCell(0).setCellValue("准考证号");
+        titleRow.createCell(1).setCellValue("考生姓名");
+        titleRow.createCell(2).setCellValue("考试科目");
+        titleRow.createCell(3).setCellValue("科目名称");
+        titleRow.createCell(4).setCellValue("工种");
+        titleRow.createCell(5).setCellValue("等级");
+        titleRow.createCell(6).setCellValue("成绩");
+        //遍历将数据放到excel列中
+        for (Student student : list) {
+            HSSFRow dataRow = sheet.createRow(sheet.getLastRowNum() + 1);
+            dataRow.createCell(0).setCellValue(student.getANumber());
+            dataRow.createCell(1).setCellValue(student.getSName());
+            dataRow.createCell(2).setCellValue(student.getExamInfo().getEName());
+            dataRow.createCell(3).setCellValue(student.getExamInfo().getCourseName());
+            dataRow.createCell(4).setCellValue(student.getExamInfo().getEWork());
+            dataRow.createCell(5).setCellValue(student.getExamInfo().getELevel());
+            dataRow.createCell(6).setCellValue(student.getGrade().getStuGrade());
+        }
+
+        response.setContentType("application/octet-stream;charset=utf-8");
+        response.setHeader("Content-Disposition", "attachment;filename="
+                + new String("参考人员总成绩".getBytes(), "iso-8859-1") + ".xls");
+
+        OutputStream ops = response.getOutputStream();
+        wb.write(ops);
+        ops.flush();
+        ops.close();
     }
 
 

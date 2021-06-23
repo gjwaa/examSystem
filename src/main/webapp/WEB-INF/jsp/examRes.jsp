@@ -64,6 +64,15 @@
                 }
             });
         });
+
+        $(function (){
+            $("#outPut").click(function (){
+                $(location).attr("href","${pageContext.request.contextPath}/exam/outPut/${sessionScope.examInfo.EID}")
+            })
+        })
+
+
+
     </script>
 </head>
 <body>
@@ -73,7 +82,7 @@
         <legend>参考人员总成绩列表</legend>
         <div class="layui-field-box">
             <table class="layui-hide" id="resTable"></table>
-            <div style="text-align: center"><button class="layui-btn">导出成绩</button></div>
+            <div style="text-align: center"><button class="layui-btn" id="outPut">导出成绩</button></div>
         </div>
     </fieldset>
 
