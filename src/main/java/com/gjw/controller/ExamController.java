@@ -376,7 +376,6 @@ public class ExamController {
     @RequestMapping("examRes/{eID}")
     @ResponseBody
     public String examRes(@PathVariable("eID") int eID, int page, int limit) {
-
         page = (page - 1) * limit;
         int count = gradeService.queryCount(eID);
         List<Student> examRes = examInfoService.queryExamRes(eID, page, limit);
