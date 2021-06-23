@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
 <html>
 <head>
     <title>考试</title>
@@ -99,13 +100,12 @@
 
 
             function onMessage(event) {
+                console.log(event.data)
                 var receiveMsg = JSON.parse(event.data)
+
                 if (receiveMsg.info == 'showTime') {
                     // console.log(receiveMsg.timeData)
                     $("#restTime").text(receiveMsg.timeData)
-                }
-                if (event.data == 'adminClosed') {
-                    alert("管理端异常关闭，请联系老师");
                 }
 
                 if (receiveMsg.info == 'pauseExam') {
@@ -156,6 +156,16 @@
                     }
                 }
 
+                if(receiveMsg.info == 'over'){
+                    handPaper("force");
+                    alert("时间到了，做不了了")
+                }
+
+                if(receiveMsg.info == 'close'){
+                    layer.msg("管理端异常关闭，请联系管理员",function (){
+                    });
+                }
+
 
             }
 
@@ -175,12 +185,7 @@
             }
 
             function onClose(event) {
-                // alert("123")
-                <%--var msg = {--%>
-                <%--    info: "closeExam",--%>
-                <%--    data:${sessionScope.get("stuCheckInfo").getSID()}--%>
-                <%--};--%>
-                <%--webSocket.send(JSON.stringify(msg));--%>
+
             }
 
 
@@ -313,8 +318,8 @@
 
             $("#handPaper").click(function () {
                 handPaper("normal")
-                alert("已交卷")
-
+                layer.msg('已交卷', function(){
+                });
             });
 
             function handPaper(state) {
@@ -334,7 +339,7 @@
                                 data:${sessionScope.get("stuCheckInfo").getSID()}
                             };
                             webSocket.send(JSON.stringify(msg));
-                            $(location).attr("href","${pageContext.request.contextPath}/stuExam/grade/${sessionScope.stuCheckInfo.EID}")
+                            $(location).attr("href","${pageContext.request.contextPath}/stuExam/grade/${sessionScope.stuCheckInfo.EID}/${sessionScope.stuCheckInfo.SID}")
                         }
                     }
                 });

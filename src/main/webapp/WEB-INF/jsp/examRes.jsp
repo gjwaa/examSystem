@@ -52,6 +52,11 @@
                             return Grade.grade.stuGrade;
                         }
                     }
+                    , {
+                        field: 'state', title: '状态', align: 'center', templet: function (Grade) {
+                            return Grade.grade.state;
+                        }
+                    }
                 ]]
                 , parseData: function (res) {
                     console.log(res.data)

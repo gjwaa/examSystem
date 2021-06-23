@@ -14,7 +14,7 @@
     <script src="${pageContext.request.contextPath}/js/jquery-3.6.0.js"></script>
     <script src="${pageContext.request.contextPath}/layui/layui.js"></script>
     <script>
-        $(function (){
+        $(function () {
             $.post({
                 url: '${pageContext.request.contextPath}/exam/question',
                 data: {
@@ -97,19 +97,19 @@
         };
 
         function onMessage(event) {
-
-            if (event.data == 'startExam') {
-                $("#examBtn").attr("class", "layui-btn").removeAttr("disabled");
+            var receiveMsg = JSON.parse(event.data)
+            console.log(event.data)
+            if (receiveMsg.info == 'startExam') {
+                $("#examBtn").attr("class", "layui-btn layui-btn-disabled").removeAttr("disabled");
+                $("#examBtn").attr("class", "layui-btn")
                 $("#examBtn").text("进入考试")
-            } else if (event.data == 'adminClosed') {
-                alert("管理端异常关闭，请联系老师");
             }
 
         }
 
         function onOpen(event) {
             console.log("握手成功");
-            // webSocket.send("连接上了");
+
         }
 
         function onError(event) {
@@ -123,8 +123,8 @@
                 dataType: 'text',
                 success: function (res) {
                     if (res == 'start') {
-                        $("#examBtn").attr("class", "layui-btn").removeAttr("disabled");
-
+                        $("#examBtn").attr("class", "layui-btn layui-btn-disabled").removeAttr("disabled");
+                        $("#examBtn").attr("class", "layui-btn")
                         $("#examBtn").text("进入考试")
                     }
 
@@ -159,8 +159,8 @@
     </fieldset>
     <div style="text-align: center">
 
-        <%--        <button class="layui-btn layui-btn-disabled" id="examBtn" disabled="disabled">等待考试</button>--%>
-        <button class="layui-btn layui-btn-disabled" id="examBtn">等待考试</button>
+        <button class="layui-btn layui-btn-disabled" id="examBtn" disabled="disabled">等待考试</button>
+        <%--        <button class="layui-btn layui-btn-disabled" id="examBtn">等待考试</button>--%>
     </div>
 
 

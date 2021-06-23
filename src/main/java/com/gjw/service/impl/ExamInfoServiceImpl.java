@@ -89,4 +89,9 @@ public class ExamInfoServiceImpl implements ExamInfoService {
     public List<Student> queryAllExamRes(int eID) {
         return examInfoMapper.queryAllExamRes(eID);
     }
+
+    @Override
+    public Student queryExamResBySID(int eID, int sID) {
+        return examInfoMapper.queryExamResBySID(eID, sID);
+    }
 }

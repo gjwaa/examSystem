@@ -93,11 +93,13 @@ public class MyWebSocketHandler implements WebSocketHandler {
         String uid = session.getAttributes().get("uid").toString();
         System.out.println("UserWebSocket:" + uid + " close connection");
         Iterator<Map.Entry<String, WebSocketSession>> iterator = userSocketSessionMap.entrySet().iterator();
+
         // 移除
         while (iterator.hasNext()) {
             // 取值查询
             Map.Entry<String, WebSocketSession> entry = iterator.next();
-            if (entry.getValue().getAttributes().get("uid").equals(uid)) {
+            String s = (String) entry.getValue().getAttributes().get("uid");
+            if (s.equals(uid) && !s.equals("admin")) {
                 iterator.remove();
                 System.out.println("WebSocket in UserMap:" + uid + " removed");
             }
@@ -120,10 +122,10 @@ public class MyWebSocketHandler implements WebSocketHandler {
             System.err.println(clientId);
             try {
 //                if (!clientId.equals("admin")) {
-                    session = userSocketSessionMap.get(clientId);
-                    if (session.isOpen()) {
-                        session.sendMessage(message);
-                    }
+                session = userSocketSessionMap.get(clientId);
+                if (session.isOpen()) {
+                    session.sendMessage(message);
+                }
 //                }
 
             } catch (IOException e) {
@@ -133,6 +135,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
         }
         return allSendSuccess;
     }
+
 
 }
 

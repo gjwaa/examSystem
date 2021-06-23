@@ -20,7 +20,7 @@ public interface ExamInfoService {
 
     int insertExamInfo(ExamInfo examInfo);
 
-    List<Student> queryAllStuByEIDLimit(int eID,int page,int limit);
+    List<Student> queryAllStuByEIDLimit(int eID, int page, int limit);
 
     List<Student> queryAllStuByEID(int eID);
 
@@ -34,12 +34,14 @@ public interface ExamInfoService {
 
     List<ExamInfo> queryAllEName();
 
-    int insertType(String tType,String tContent);
+    int insertType(String tType, String tContent);
 
     String queryTContent(String tType);
 
     List<Student> queryExamRes(int eID, int page, int limit);
 
     List<Student> queryAllExamRes(int eID);
+
+    Student queryExamResBySID(int eID, int sID);
 
 }

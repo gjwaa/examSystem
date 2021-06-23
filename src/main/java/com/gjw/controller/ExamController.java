@@ -4,14 +4,11 @@ package com.gjw.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.gjw.bean.*;
 import com.gjw.service.*;
-import com.gjw.utils.DateUtils;
 import com.gjw.utils.ExcelUtil;
 import com.gjw.utils.StrUtil;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.xmlbeans.impl.regex.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -22,11 +19,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.beans.IntrospectionException;
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.time.LocalDate;
 
 /**
  * @version 1.0
@@ -282,9 +278,25 @@ public class ExamController {
         response.setContentType("text/text;charset=utf-8");
         response.setCharacterEncoding("UTF-8");
         recordService.updateRestTimeByEID(eID, restTime);
+
         response.getWriter().print("ok");
 
     }
+
+    @RequestMapping("setOver")
+    public void setOver(HttpServletResponse response, int eID) throws IOException {
+        response.setContentType("text/text;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
+        Map map = new HashMap();
+        map.put("eID", eID);
+        map.put("state", "考试结束");
+        int i = recordService.updateRecordStateByEID(map);
+        if (i >= 1) {
+            response.getWriter().print("overOK");
+        }
+
+    }
+
 
     @RequestMapping("paper")
     public String paper() {
@@ -408,6 +420,7 @@ public class ExamController {
         titleRow.createCell(4).setCellValue("工种");
         titleRow.createCell(5).setCellValue("等级");
         titleRow.createCell(6).setCellValue("成绩");
+        titleRow.createCell(7).setCellValue("状态");
         //遍历将数据放到excel列中
         for (Student student : list) {
             HSSFRow dataRow = sheet.createRow(sheet.getLastRowNum() + 1);
@@ -418,6 +431,7 @@ public class ExamController {
             dataRow.createCell(4).setCellValue(student.getExamInfo().getEWork());
             dataRow.createCell(5).setCellValue(student.getExamInfo().getELevel());
             dataRow.createCell(6).setCellValue(student.getGrade().getStuGrade());
+            dataRow.createCell(7).setCellValue(student.getGrade().getState());
         }
 
         response.setContentType("application/octet-stream;charset=utf-8");

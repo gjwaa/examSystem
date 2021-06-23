@@ -87,6 +87,9 @@
         webSocket.onmessage = function (event) {
             onMessage(event);
         };
+        webSocket.onclose = function (event){
+            onClose(event);
+        };
 
         function onMessage(event) {
             var receiveMsg = JSON.parse(event.data)
@@ -107,6 +110,15 @@
         function onError(event) {
             // alert(event.data);
             alert("wrong")
+        }
+
+        function onClose(event) {
+            var msg = {
+                info: "close",
+                data: ""
+            };
+            webSocket.send(JSON.stringify(msg));
+            alert("asas")
         }
 
         function startExam() {
@@ -184,6 +196,7 @@
                 });
             }
 
+            //开始考试
             $("#startExam").click(function () {
                 layer.confirm('是否开始考试', {
                     btn: ['是', '否'] //按钮
@@ -237,13 +250,34 @@
                     }
                     webSocket.send(JSON.stringify(wsMsg));
                     $("#timeDown").text(show)
+                    if (times <= 0) {
+                        clearInterval(timer);
+                        layer.msg("时间到，已强制提交所有试卷");
+                        $("stateLabel").text("考试状态：考试结束")
+                        var msg = {
+                            info: "over",
+                            data: ""
+                        }
+                        webSocket.send(JSON.stringify(msg));
+                        changeOver();
+                    }
                     times--;
                 }, 1000);
-                if (times <= 0) {
-                    clearInterval(timer);
-                }
+
             };
 
+            function changeOver(){
+                $.post({
+                    url: "${pageContext.request.contextPath}/exam/setOver",
+                    data: {
+                        eID: "${sessionScope.get("examInfo").getEID()}"
+                    },
+                    dataType: "text",
+                    success: function (res) {
+                        console.log(res)
+                    }
+                });
+            }
 
             function setRestTime(time) {
                 if (time > 8000) {
@@ -372,7 +406,7 @@
                     <legend>监考操作</legend>
                     <div class="layui-field-box">
                         <label id="stateLabel">考试状态：</label><br><br>
-                        <label>等待倒计时：</label><br><br>
+                        <label>考试倒计时：</label><br><br>
                         <label id="timeDown"></label><br><br>
                         <button type="button" class="layui-btn" id="startExam">开始考试</button>
                         <br><br>

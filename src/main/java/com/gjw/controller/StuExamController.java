@@ -168,10 +168,10 @@ public class StuExamController {
         response.getWriter().print("isHandPaper");
     }
 
-    @RequestMapping("grade/{eID}")
-    private String grade(HttpSession session, @PathVariable("eID") int eID) {
-        List<Student> list = examInfoService.queryAllExamRes(eID);
-        session.setAttribute("examGrade", list);
+    @RequestMapping("grade/{eID}/{sID}")
+    private String grade(HttpSession session, @PathVariable("eID") int eID, @PathVariable("sID") int sID) {
+        Student student = examInfoService.queryExamResBySID(eID, sID);
+        session.setAttribute("examGrade", student);
         return "stu/grade";
     }
 

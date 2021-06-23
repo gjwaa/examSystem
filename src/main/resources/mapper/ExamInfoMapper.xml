@@ -96,7 +96,14 @@
     </select>
 
     <select id="queryExamRes" resultMap="resVo">
-        SELECT s.aNumber, s.sName, e.eName, e.courseName, e.eWork, e.eLevel, g.stuGrade
+        SELECT s.aNumber,
+               s.sName,
+               e.eName,
+               e.courseName,
+               e.eWork,
+               e.eLevel,
+               g.stuGrade,
+               g.state
         FROM student s
                  INNER JOIN grade g on s.sID = g.sID
                  LEFT JOIN examinfo e ON g.eID = e.eID
@@ -114,11 +121,19 @@
         </association>
         <association property="grade" javaType="Grade">
             <result column="stuGrade" property="stuGrade"/>
+            <result column="state" property="state"/>
         </association>
     </resultMap>
 
     <select id="queryAllExamRes" resultMap="allResVo">
-        SELECT s.aNumber, s.sName, e.eName, e.courseName, e.eWork, e.eLevel, g.stuGrade
+        SELECT s.aNumber,
+               s.sName,
+               e.eName,
+               e.courseName,
+               e.eWork,
+               e.eLevel,
+               g.stuGrade,
+               g.state
         FROM student s
                  INNER JOIN grade g on s.sID = g.sID
                  LEFT JOIN examinfo e ON g.eID = e.eID
@@ -135,6 +150,37 @@
         </association>
         <association property="grade" javaType="Grade">
             <result column="stuGrade" property="stuGrade"/>
+            <result column="state" property="state"/>
+        </association>
+    </resultMap>
+
+    <select id="queryExamResBySID" resultMap="sIDResVo">
+        SELECT s.aNumber,
+               s.sName,
+               e.eName,
+               e.courseName,
+               e.eWork,
+               e.eLevel,
+               g.stuGrade,
+               g.state
+        FROM student s
+                 INNER JOIN grade g on s.sID = g.sID
+                 LEFT JOIN examinfo e ON g.eID = e.eID
+        where e.eID = #{eID}
+          and s.sID = #{sID}
+    </select>
+    <resultMap id="sIDResVo" type="Student">
+        <result column="aNumber" property="aNumber"/>
+        <result column="sName" property="sName"/>
+        <association property="examInfo" javaType="ExamInfo">
+            <result column="eName" property="eName"/>
+            <result column="courseName" property="courseName"/>
+            <result column="eWork" property="eWork"/>
+            <result column="eLevel" property="eLevel"/>
+        </association>
+        <association property="grade" javaType="Grade">
+            <result column="stuGrade" property="stuGrade"/>
+            <result column="state" property="state"/>
         </association>
     </resultMap>
 

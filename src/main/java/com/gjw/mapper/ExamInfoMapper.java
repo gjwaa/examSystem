@@ -23,7 +23,7 @@ public interface ExamInfoMapper {
 
     int insertExamInfo(ExamInfo examInfo);
 
-    List<Student> queryAllStuByEIDLimit(@Param("eID") int eID,@Param("page") int page,@Param("limit") int limit);
+    List<Student> queryAllStuByEIDLimit(@Param("eID") int eID, @Param("page") int page, @Param("limit") int limit);
 
     List<Student> queryAllStuByEID(int eID);
 
@@ -37,12 +37,14 @@ public interface ExamInfoMapper {
 
     List<ExamInfo> queryAllEName();
 
-    int insertType(@Param("tType") String tType,@Param("tContent") String tContent);
+    int insertType(@Param("tType") String tType, @Param("tContent") String tContent);
 
     String queryTContent(String tType);
 
-    List<Student> queryExamRes(@Param("eID") int eID,@Param("page") int page,@Param("limit") int limit);
+    List<Student> queryExamRes(@Param("eID") int eID, @Param("page") int page, @Param("limit") int limit);
 
     List<Student> queryAllExamRes(int eID);
+
+    Student queryExamResBySID(@Param("eID") int eID, @Param("sID") int sID);
 
 }
