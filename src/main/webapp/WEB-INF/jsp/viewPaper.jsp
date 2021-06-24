@@ -93,11 +93,12 @@
                         <div class="layui-form">
                             <table class="layui-table">
                                 <tbody>
-                                <tr>
-                                    <c:forEach items="${sessionScope.get('allQuestion')}" var="question" varStatus="i">
-                                        <td id="${i.index+1}">${i.index+1}</td>
-                                    </c:forEach>
-                                </tr>
+                                <c:forEach items="${sessionScope.get('allQuestion')}" var="question" varStatus="i">
+                                    <td>${question.getQNum()}</td>
+                                    <c:if test="${(i.index+1)%5==0}">
+                                        <tr></tr>
+                                    </c:if>
+                                </c:forEach>
                                 </tbody>
                             </table>
                         </div>

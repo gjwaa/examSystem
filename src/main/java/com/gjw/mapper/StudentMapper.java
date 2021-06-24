@@ -2,6 +2,7 @@ package com.gjw.mapper;
 
 import com.gjw.bean.Grade;
 import com.gjw.bean.Student;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,5 +18,7 @@ public interface StudentMapper {
     Student checkLogin(Map map);
 
     List<Grade> queryAllSID(int eID);
+
+    int checkCheat(@Param("eID") int eID, @Param("sID") int sID,@Param("state") String state);
 
 }

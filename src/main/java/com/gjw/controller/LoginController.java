@@ -38,23 +38,36 @@ public class LoginController {
     @Value("${adminPwd}")
     private String adminPwd;
 
+    @RequestMapping("/toLogin")
+    public String toLogin() {
+        return "login";
+    }
+
     @RequestMapping("/main")
     public String main() {
-
         return "main";
     }
 
     @RequestMapping("/login")
-    public String login(HttpSession session, String acc,String pwd,String clientVerify) {
+    public void login(HttpServletResponse response,HttpSession session, String acc, String pwd, String clientVerify) throws IOException {
 //        System.out.println("===>"+adminAcc+adminPwd);
+        response.setContentType("text/text;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
         String serviceVerify = (String) session.getAttribute("serviceVerify");
-        System.err.println("server："+serviceVerify+"***"+"client:"+clientVerify);
+        System.err.println("server：" + serviceVerify + "***" + "client:" + clientVerify);
         if (acc.equals(adminAcc) && pwd.equals(adminPwd) && clientVerify.equals(serviceVerify)) {
             session.setAttribute("adminLoginInfo", acc);
             System.out.println("adminLoginInfo===>" + session.getAttribute("adminLoginInfo"));
-            return "main";
+            response.getWriter().print("loginTrue");
+        } else {
+            response.getWriter().print("loginFalse");
         }
-        return "login";
+
+    }
+
+    @RequestMapping("/toMain")
+    public String toMain(){
+        return "main";
     }
 
     @RequestMapping("/loginOut")
@@ -78,45 +91,45 @@ public class LoginController {
     }
 
     @RequestMapping("/checkAcc")
-    public void checkAcc(HttpServletResponse response,String acc) throws IOException {
+    public void checkAcc(HttpServletResponse response, String acc) throws IOException {
         response.setContentType("text/text;charset=utf-8");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
-        if (adminAcc.equals(acc)){
+        if (adminAcc.equals(acc)) {
             out.print("accPass");
-        }else {
+        } else {
             out.print("accUnPass");
         }
     }
 
     @RequestMapping("/checkPwd")
-    public void checkPwd(HttpServletResponse response,String pwd) throws IOException {
+    public void checkPwd(HttpServletResponse response, String pwd) throws IOException {
         response.setContentType("text/text;charset=utf-8");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
-        if (adminPwd.equals(pwd)){
+        if (adminPwd.equals(pwd)) {
             out.print("pwdPass");
-        }else {
+        } else {
             out.print("pwdUnPass");
         }
     }
 
     @RequestMapping("/checkVerify")
-    public void checkVerify(HttpSession session,HttpServletResponse response,String verify) throws IOException {
+    public void checkVerify(HttpSession session, HttpServletResponse response, String verify) throws IOException {
         response.setContentType("text/text;charset=utf-8");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
         String serviceVerify = (String) session.getAttribute("serviceVerify");
-        if (serviceVerify.equals(verify)){
+        if (serviceVerify.equals(verify)) {
             out.print("verifyPass");
-        }else {
+        } else {
             out.print("verifyUnPass");
         }
     }
 
     @RequestMapping("/help")
     public String help() {
-       return "help";
+        return "help";
     }
 
     @RequestMapping("/newPaper")
@@ -126,16 +139,16 @@ public class LoginController {
 
     @ResponseBody
     @RequestMapping("/upLoad")
-    public String upLoad(@RequestParam("file") CommonsMultipartFile file,String zipPwd,HttpServletResponse response, HttpServletRequest request, Model model) throws IOException, ServletException {
-        response.setDateHeader("Expires",0);
-        response.setHeader("Buffer","True");
-        response.setHeader("Cache-Control","no-cache");
-        response.setHeader("Cache-Control","no-store");
-        response.setHeader("Expires","0");
-        response.setHeader("ETag",String.valueOf(System.currentTimeMillis()));
-        response.setHeader("Pragma","no-cache");
-        response.setHeader("Date",String.valueOf(new Date()));
-        response.setHeader("Last-Modified",String.valueOf(new Date()));
+    public String upLoad(@RequestParam("file") CommonsMultipartFile file, String zipPwd, HttpServletResponse response, HttpServletRequest request, Model model) throws IOException, ServletException {
+//        response.setDateHeader("Expires", 0);
+//        response.setHeader("Buffer", "True");
+//        response.setHeader("Cache-Control", "no-cache");
+//        response.setHeader("Cache-Control", "no-store");
+//        response.setHeader("Expires", "0");
+//        response.setHeader("ETag", String.valueOf(System.currentTimeMillis()));
+//        response.setHeader("Pragma", "no-cache");
+//        response.setHeader("Date", String.valueOf(new Date()));
+//        response.setHeader("Last-Modified", String.valueOf(new Date()));
         String path = request.getServletContext().getRealPath("/upload");
         File realPath = new File(path);
         if (!realPath.exists()) {
@@ -144,7 +157,7 @@ public class LoginController {
         System.out.println("文件保存地址：" + realPath);
         File dest = new File(realPath + "/" + file.getOriginalFilename());
         file.transferTo(dest);
-        System.out.println("fileName===>"+dest.getName());
+        System.out.println("fileName===>" + dest.getName());
         HttpSession session = request.getSession();
         session.setAttribute("fileLoadUrl", dest.getAbsolutePath());
         session.setAttribute("fileRootUrl", realPath);
@@ -153,7 +166,7 @@ public class LoginController {
         File[] files = ZipUtil.unzip(dest, realPath.getAbsolutePath(), zipPwd);
 
         for (File zipFile : files) {
-            System.out.println(zipFile.getAbsolutePath()+"<<<<<");
+            System.out.println(zipFile.getAbsolutePath() + "<<<<<");
             session.setAttribute(zipFile.getName(), zipFile.getAbsolutePath());
         }
         jsonObject.put("msg", "ok");
@@ -162,8 +175,6 @@ public class LoginController {
         return jsonObject.toString();
 
     }
-
-
 
 
 }

@@ -74,17 +74,24 @@ public class StuExamController {
         map.put("IDCard", IDCard);
         map.put("sName", sName);
         Student student = studentService.checkLogin(map);
+        int cheat = studentService.checkCheat(student.getEID(), student.getSID(), "作弊");
         JSONObject jsonObject = new JSONObject();
-        if (student != null) {
-            session.setAttribute("stuCheckInfo", student);
-            System.err.println(student);
-            System.out.println("=======================================");
-            jsonObject.put("login", "true");
-            out.print(jsonObject);
+        if (cheat <= 0) {
+            if (student != null) {
+                session.setAttribute("stuCheckInfo", student);
+                System.err.println(student);
+                System.out.println("=======================================");
+                jsonObject.put("login", "true");
+                out.print(jsonObject);
+            } else {
+                jsonObject.put("login", "false");
+                out.print(jsonObject);
+            }
         } else {
-            jsonObject.put("login", "false");
+            jsonObject.put("login", "cheat");
             out.print(jsonObject);
         }
+
 
     }
 
@@ -142,6 +149,7 @@ public class StuExamController {
     public void handPaper(HttpServletResponse response, int eID, int sID, String state) throws IOException {
         response.setContentType("text/text;charset=utf-8");
         response.setCharacterEncoding("UTF-8");
+        JSONObject jsonObject = new JSONObject();
         List<Answer> answers = answerService.judgeAnswer(eID, sID);
         int point = 0;
         for (Answer answer : answers) {
@@ -154,18 +162,20 @@ public class StuExamController {
             } else {
                 gradeService.updateState(eID, sID, "已交卷");
             }
-
+            jsonObject.put("isHandPaper", point + "分");
         }
         if (state.equals("cheat")) {
             gradeService.updateGrade(eID, sID, 0);
             gradeService.updateState(eID, sID, "作弊");
+            jsonObject.put("isHandPaper", "0分");
         }
         if (state.equals("violation")) {
             gradeService.updateGrade(eID, sID, point);
             gradeService.updateState(eID, sID, "违纪");
+            jsonObject.put("isHandPaper", "0分");
         }
+        response.getWriter().print(jsonObject.toString());
 
-        response.getWriter().print("isHandPaper");
     }
 
     @RequestMapping("grade/{eID}/{sID}")

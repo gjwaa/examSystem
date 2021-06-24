@@ -18,7 +18,7 @@
     <script>
         var host = window.location.host;
         var webSocket =
-            new WebSocket("ws://" + host + "/ws?id="+Math.random());
+            new WebSocket("ws://" + host + "/examSystem/ws?id="+Math.random());
         var hum = null;
         var s_json = null;
         webSocket.onerror = function (event) {

@@ -20,6 +20,10 @@ public class LoginInterceptor implements HandlerInterceptor {
             return true;
         }
 
+        if (request.getRequestURI().contains("toLogin")) {
+            return true;
+        }
+
         if (request.getSession().getAttribute("adminLoginInfo") != null) {
 //            System.out.println(request.getRequestURI());
             return true;

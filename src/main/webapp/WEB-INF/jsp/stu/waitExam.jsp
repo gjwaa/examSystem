@@ -83,7 +83,7 @@
 
         var host = window.location.host;
         var webSocket =
-            new WebSocket("ws://" + host + "/ws?id=" + ${sessionScope.get("stuCheckInfo").getSID()});
+            new WebSocket("ws://" + host + "/examSystem/ws?id=" + ${sessionScope.get("stuCheckInfo").getSID()});
         var hum = null;
         var s_json = null;
         webSocket.onerror = function (event) {
@@ -154,7 +154,7 @@
     <fieldset class="layui-elem-field" style="margin-top: 30px;">
         <legend>考前须知</legend>
         <div class="layui-field-box">
-            <label>。。。</label>
+            <label>不要作弊，不要违纪哦！</label>
         </div>
     </fieldset>
     <div style="text-align: center">

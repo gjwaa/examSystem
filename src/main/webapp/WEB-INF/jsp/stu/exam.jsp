@@ -82,7 +82,7 @@
 
             var host = window.location.host;
             var webSocket =
-                new WebSocket("ws://" + host + "/ws?id=" + ${sessionScope.get("stuCheckInfo").getSID()});
+                new WebSocket("ws://" + host + "/examSystem/ws?id=" + ${sessionScope.get("stuCheckInfo").getSID()});
             var hum = null;
             var s_json = null;
             webSocket.onerror = function (event) {
@@ -146,6 +146,7 @@
                 }
 
                 if (receiveMsg.info == 'violation') {
+                    console.log(receiveMsg.data)
                     var stuID = (receiveMsg.data).substr(0, (receiveMsg.data).length - 1);
                     var arr = (stuID).split(",")
                     for (let x in arr) {
@@ -156,13 +157,13 @@
                     }
                 }
 
-                if(receiveMsg.info == 'over'){
+                if (receiveMsg.info == 'over') {
                     handPaper("force");
                     alert("时间到了，做不了了")
                 }
 
-                if(receiveMsg.info == 'close'){
-                    layer.msg("管理端异常关闭，请联系管理员",function (){
+                if (receiveMsg.info == 'close') {
+                    layer.msg("管理端异常关闭，请联系管理员", function () {
                     });
                 }
 
@@ -318,7 +319,7 @@
 
             $("#handPaper").click(function () {
                 handPaper("normal")
-                layer.msg('已交卷', function(){
+                layer.msg('已交卷', function () {
                 });
             });
 
@@ -330,16 +331,17 @@
                         sID:${sessionScope.get("stuCheckInfo").getSID()},
                         state: state
                     },
-                    dataType: 'text',
+                    dataType: 'json',
                     success: function (res) {
                         console.log(res)
-                        if (res == 'isHandPaper') {
+                        if (res.isHandPaper != null) {
                             var msg = {
-                                info: res,
+                                info: 'isHandPaper',
+                                point: res.isHandPaper,
                                 data:${sessionScope.get("stuCheckInfo").getSID()}
                             };
                             webSocket.send(JSON.stringify(msg));
-                            $(location).attr("href","${pageContext.request.contextPath}/stuExam/grade/${sessionScope.stuCheckInfo.EID}/${sessionScope.stuCheckInfo.SID}")
+                            $(location).attr("href", "${pageContext.request.contextPath}/stuExam/grade/${sessionScope.stuCheckInfo.EID}/${sessionScope.stuCheckInfo.SID}")
                         }
                     }
                 });

@@ -32,7 +32,8 @@
         FROM student s,
              examinfo e
         WHERE s.eID = e.eID
-        limit ${page},#{limit}
+          and e.eID = #{eID}
+        limit #{page},#{limit}
     </select>
     <resultMap id="stuVo" type="Student">
         <result column="sID" property="sID"/>
@@ -64,12 +65,14 @@
     </select>
 
     <select id="queryAllStuByEID" resultMap="vo">
-        SELECT s.sName, s.IDCard, s.aNumber, e.eName, e.eLevel
+        SELECT s.sID,s.sName, s.IDCard, s.aNumber, e.eName, e.eLevel
         FROM student s,
              examinfo e
         WHERE s.eID = e.eID
+          and e.eID = #{eID}
     </select>
     <resultMap id="vo" type="Student">
+        <result column="sID" property="sID"/>
         <result column="sName" property="sName"/>
         <result column="IDCard" property="IDCard"/>
         <result column="aNumber" property="aNumber"/>

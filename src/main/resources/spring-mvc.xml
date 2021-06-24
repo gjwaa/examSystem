@@ -34,6 +34,10 @@
             <mvc:mapping path="/admin/**"/>
             <bean class="com.gjw.config.LoginInterceptor"/>
         </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/exam/**"/>
+            <bean class="com.gjw.config.ExamInterceptor"/>
+        </mvc:interceptor>
     </mvc:interceptors>
 
     <!--文件上传-->

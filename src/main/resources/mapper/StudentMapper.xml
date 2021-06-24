@@ -57,8 +57,17 @@
     </resultMap>
 
     <select id="queryAllSID" parameterType="int" resultType="Grade">
-        select sID,eID
-        from student where eID=#{eID}
+        select sID, eID
+        from student
+        where eID = #{eID}
+    </select>
+
+    <select id="checkCheat" resultType="int">
+        select count(*)
+        from grade
+        where eID = #{eID}
+          and sID = #{sID}
+          and state = #{state}
     </select>
 
 

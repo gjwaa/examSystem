@@ -98,8 +98,8 @@ public class MyWebSocketHandler implements WebSocketHandler {
         while (iterator.hasNext()) {
             // 取值查询
             Map.Entry<String, WebSocketSession> entry = iterator.next();
-            String s = (String) entry.getValue().getAttributes().get("uid");
-            if (s.equals(uid) && !s.equals("admin")) {
+//            String s = (String) entry.getValue().getAttributes().get("uid");
+            if (entry.getValue().getAttributes().get("uid").equals(uid)) {
                 iterator.remove();
                 System.out.println("WebSocket in UserMap:" + uid + " removed");
             }

@@ -61,8 +61,9 @@ public class ExamController {
 
 
     @RequestMapping("/showInfo")
-    public String showInfo(HttpSession session) throws Exception {
-
+    public void showInfo(HttpServletResponse response, HttpSession session) throws Exception {
+        response.setContentType("text/text;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
         //读取考试excel
         List<List<Object>> examListByExcel = null;
         File examFile = new File(session.getAttribute("fileRootUrl") + "\\Test\\Test.xls");
@@ -184,9 +185,9 @@ public class ExamController {
         }
         gradeService.insertAllStu(gradeList);
 
-
-        return "examManage";
-
+//
+//        return "examManage";
+        response.getWriter().print("ok");
     }
 
     @RequestMapping("/examInfo")
@@ -218,7 +219,9 @@ public class ExamController {
         ExamInfo examInfo = (ExamInfo) session.getAttribute("examInfo");
         page = (page - 1) * limit;
         List<Student> students = examInfoService.queryAllStuByEIDLimit(examInfo.getEID(), page, limit);
-        int count = examInfoService.queryAllStuByEID(examInfo.getEID()).size();
+        List<Student> list = examInfoService.queryAllStuByEID(examInfo.getEID());
+        session.setAttribute("stuInformation", list);
+        int count = list.size();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("code", 0);
         jsonObject.put("msg", "stuTable-ok");

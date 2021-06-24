@@ -79,6 +79,8 @@
                             $(location).attr("href", "${pageContext.request.contextPath}/stuExam/waitExam/" + $("#IDCard").val())
                         } else if (res.login === 'false') {
                             alert("信息有误")
+                        }else if (res.login === 'cheat') {
+                            alert("你作弊了，请联系管理员")
                         }
 
                     }
@@ -89,7 +91,7 @@
     </script>
 </head>
 <body>
-<div style="width: 100%;height: 100%;z-index: -1;background: url('${pageContext.request.contextPath}/images/bk.png') no-repeat;background-size: 100% 100%">
+<div style="width: 100%;height: 100%;z-index: -1;background-color: rgba(7,47,72,0.89); background-size: 100% 100%">
     <div class="layui-row">
         <div class="layui-col-md12" style="width: 100%;height: 30%"></div>
     </div>
@@ -98,7 +100,7 @@
             <div class="layui-col-md4">
                 <div class="grid-demo grid-demo-bg1">&nbsp;</div>
             </div>
-            <div class="layui-col-md4" style="background: rgba(255,255,255,0.5);border-radius: 20px">
+            <div class="layui-col-md4" style="background: rgba(255,255,255,0.1);border-radius: 20px">
                 <div class="grid-demo">
                     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
                         <legend>学生考试系统</legend>
@@ -145,9 +147,9 @@
                             <div class="layui-form-mid layui-word-aux" id="tips" style="color: #009688">提示：请输入信息</div>
 
                             <div class="layui-form-item">
-                                <div class="layui-container" style="width: 85%" ;>
+                                <div style="text-align: center">
                                     <input type="button" id="login"
-                                           class="layui-btn layui-btn-primary layui-border-green" value="登录">
+                                           class="layui-btn" value="登&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;录">
                                 </div>
                             </div>
 

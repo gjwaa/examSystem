@@ -22,7 +22,7 @@
 
     <script>
         $(function () {
-            queryAll(1, 2);
+            queryAll(1, 6);
         });
 
         function queryAll(page, limit) {
@@ -31,11 +31,8 @@
                 async: false,
                 dataType: 'json',
                 data: {
-                    // "limit": limit,
-                    // "page": (page - 1) * limit
                     "page": page,
                     "limit": limit
-
                 },
                 success: function (data) {
                     console.log(data)
@@ -62,9 +59,11 @@
                         for (let i = 0; i < stuNum; i++) {
                             var div = '<div class="layui-inline" style="border: #eee 1px solid;margin: 20px 50px" id="">' + '<input type="checkbox" name="' + 'stuCheckBox' + '"value="' + res.data[i].sID + '"lay-skin="primary"><br>'
                                 + '<label>准考证号：' + res.data[i].aNumber + '</label><br>' + '<label>姓名：' + res.data[i].sName + '</label><br>'
-                                + '<label>状态：</label>' + '<label class="examState" id="' + res.data[i].sID + '">' + '等待登录</label><br>' + '<label>成绩：</label>' + '<label>无</label>' + '</div>';
+                                + '<label>状态：</label>' + '<label class="examState" id="' + res.data[i].sID + '">' + '等待登录</label><br>' + '<label>成绩：</label>' + '<label name="' + res.data[i].sID + '">无</label>' + '</div>';
                             $("#stuList").append(div);
-
+                        }
+                        if ($("#allSelect").is(":checked")) {
+                            $("input[name='stuCheckBox']").attr("checked", "true");
                         }
                     })
                 }
@@ -75,7 +74,7 @@
 
         var host = window.location.host;
         var webSocket =
-            new WebSocket("ws://" + host + "/ws?id=admin");
+            new WebSocket("ws://" + host + "/examSystem/ws?id=admin");
         var hum = null;
         var s_json = null;
         webSocket.onerror = function (event) {
@@ -87,17 +86,19 @@
         webSocket.onmessage = function (event) {
             onMessage(event);
         };
-        webSocket.onclose = function (event){
+        webSocket.onclose = function (event) {
             onClose(event);
         };
 
         function onMessage(event) {
             var receiveMsg = JSON.parse(event.data)
+            console.log(event.data)
             if (receiveMsg.info == 'stuExamIng') {
                 $("#" + receiveMsg.data).html("考试中");
             }
             if (receiveMsg.info == 'isHandPaper') {
                 $("#" + receiveMsg.data).html("已交卷");
+                $("[name='" + receiveMsg.data + "']").html(receiveMsg.point);
             }
 
         }
@@ -118,7 +119,7 @@
                 data: ""
             };
             webSocket.send(JSON.stringify(msg));
-            alert("asas")
+
         }
 
         function startExam() {
@@ -129,8 +130,8 @@
             webSocket.send(JSON.stringify(msg));
         }
 
+        var allSID = '';
         $(function () {
-
             $.post({
                 url: "${pageContext.request.contextPath}/exam/checkStuState",
                 dataType: "json",
@@ -138,9 +139,12 @@
                     console.log(res)
                     for (let x in res) {
                         $("#" + res[x].sID).html(res[x].state);
+                        $("[name='" + res[x].sID + "']").html(res[x].stuGrade);
+                        allSID += res[x].sID + ','
                     }
                 }
             });
+
 
             $.post({
                 url: "${pageContext.request.contextPath}/exam/checkExamState",
@@ -266,7 +270,7 @@
 
             };
 
-            function changeOver(){
+            function changeOver() {
                 $.post({
                     url: "${pageContext.request.contextPath}/exam/setOver",
                     data: {
@@ -386,7 +390,15 @@
                     msg.data += $(this).val() + ','
                 });
                 webSocket.send(JSON.stringify(msg));
-            }
+                if ($("#allSelect").is(":checked")) {
+                    msg.data = allSID;
+                    webSocket.send(JSON.stringify(msg));
+                }
+            };
+
+            $("#allSelect").click(function () {
+                $("input[name='stuCheckBox']").attr("checked", this.checked);
+            })
 
 
         });
@@ -441,10 +453,9 @@
                 <fieldset class="layui-elem-field" style="margin-top: 30px;">
                     <legend>考生列表</legend>
                     <div class="layui-field-box">
+                        <input type="checkbox" id="allSelect">全选</input>
                         <div id="stuList" class="layui-inline" style="border: #eee 1px solid;margin: 20px 50px"></div>
-
                         <div id="page"></div>
-
                     </div>
                 </fieldset>
             </div>

@@ -37,4 +37,9 @@ public class StudentServiceImpl implements StudentService {
     public List<Grade> queryAllSID(int eID) {
         return studentMapper.queryAllSID(eID);
     }
+
+    @Override
+    public int checkCheat(int eID, int sID,String state) {
+        return studentMapper.checkCheat(eID, sID, state);
+    }
 }

@@ -6,6 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <html>
 <head>
     <title>登录页面</title>
@@ -13,6 +14,8 @@
     <script src="${pageContext.request.contextPath}/js/jquery-3.6.0.js"></script>
     <script>
         $(function () {
+
+
             $("#verifyImg").click(function () {
                 $("#verifyImg").attr("src", "${pageContext.request.contextPath}/admin/verify?" + Math.random());
             });
@@ -68,32 +71,46 @@
                 })
             })
 
-            // $("#acc").blur(function (){
-            //     $("#acc").css("ime-mode","disabled");
-            // })
+           $("#login").click(function (){
+               $.post({
+                   url: "${pageContext.request.contextPath}/admin/login",
+                   data:{
+                       acc:$("#acc").val(),
+                       pwd:$("#pwd").val(),
+                       clientVerify:$("#verify").val(),
+                   },
+                   dataType: "text",
+                   success: function (data) {
+                       if (data == "loginTrue") {
+                           $(location).attr("href","${pageContext.request.contextPath}/admin/toMain");
+                       } else if (data == "loginFalse") {
+                           alert("信息有误")
+                       }
+                   }
+               })
+           })
 
         })
     </script>
 </head>
 
 <body>
-<div style="width: 100%;height: 100%;z-index: -1;background: url('${pageContext.request.contextPath}/images/bk.png') no-repeat;background-size: 100% 100%">
+<div style="width: 100%;height: 100%;z-index: -1;background-color: rgba(7,47,72,0.89);background-size: 100% 100%">
     <div class="layui-row">
-        <div class="layui-col-md12" style="width: 100%;height: 30%"> </div>
+        <div class="layui-col-md12" style="width: 100%;height: 30%"></div>
     </div>
     <div class="layui-container">
         <div class="layui-row">
             <div class="layui-col-md4">
                 <div class="grid-demo grid-demo-bg1">&nbsp;</div>
             </div>
-            <div class="layui-col-md4" style="background: rgba(255,255,255,0.5);border-radius: 20px">
+            <div class="layui-col-md4" style="background: rgba(255,255,255,0.1);border-radius: 20px">
                 <div class="grid-demo">
                     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
                         <legend>考试后台登录系统</legend>
                     </fieldset>
                     <div class="layui-container" style="width: 100%">
-                        <form class="layui-form layui-form-pane" action="${pageContext.request.contextPath}/admin/login"
-                              method="post">
+                        <form class="layui-form layui-form-pane" action="" method="post">
                             <div class="layui-form-item">
                                 <label class="layui-form-label">账号</label>
                                 <div class="layui-input-inline">
@@ -121,7 +138,8 @@
                                                onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" style="ime-mode:inactive"
                                                required/>
                                     </div>
-                                    <img style="cursor:hand" src="${pageContext.request.contextPath}/admin/verify" id="verifyImg"/>
+                                    <img style="cursor:hand" src="${pageContext.request.contextPath}/admin/verify"
+                                         id="verifyImg"/>
 
                                 </div>
                             </div>
@@ -129,10 +147,9 @@
 
 
                             <div class="layui-form-item">
-                                <div class="layui-container" style="width: 85%";>
-                                <input type="submit" id="login" class="layui-btn layui-btn-primary layui-border-green"
-                                       value="登录">
-                                <input type="reset" class="layui-btn layui-btn-primary layui-border-green" value="重置">
+                                <div  style="text-align: center" ;>
+                                    <input type="button" id="login" class="layui-btn" value="登录">
+                                    <input type="reset" class="layui-btn" value="重置">
                                 </div>
                             </div>
 
