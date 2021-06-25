@@ -15,7 +15,6 @@
     <script>
         $(function () {
             $("#over").click(function () {
-               sessionStorage.clear();
                $(location).attr("href","${pageContext.request.contextPath}/stuExam/login");
             });
         })

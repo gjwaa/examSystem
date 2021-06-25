@@ -97,7 +97,7 @@
                 $("#" + receiveMsg.data).html("考试中");
             }
             if (receiveMsg.info == 'isHandPaper') {
-                $("#" + receiveMsg.data).html("已交卷");
+                $("#" + receiveMsg.data).html(receiveMsg.state);
                 $("[name='" + receiveMsg.data + "']").html(receiveMsg.point);
             }
 
@@ -127,7 +127,22 @@
                 info: "startExam",
                 data: ""
             };
-            webSocket.send(JSON.stringify(msg));
+            // webSocket.send(JSON.stringify(msg));
+            try {
+                webSocket.send(JSON.stringify(msg));
+            } catch(err) {
+                var tryTime = 0;
+                // 重试10次，每次之间间隔3秒
+                if (tryTime < 1) {
+                    var t1 = setTimeout(function () {
+                        tryTime++;
+                        webSocket.send(JSON.stringify(msg));
+                    }, 3*1000);
+                } else {
+                    console.error("重连失败.");
+                }
+            }
+
         }
 
         var allSID = '';

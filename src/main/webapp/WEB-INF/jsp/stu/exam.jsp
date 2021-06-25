@@ -319,11 +319,20 @@
 
             $("#handPaper").click(function () {
                 handPaper("normal")
-                layer.msg('已交卷', function () {
-                });
+                alert("已交卷")
             });
 
             function handPaper(state) {
+                var toState = '';
+                if (state == 'normal') {
+                    toState = '已交卷';
+                } else if (state == 'force') {
+                    toState = '已交卷';
+                } else if (state == 'cheat') {
+                    toState = '作弊';
+                } else if (state == 'violation') {
+                    toState = '违纪';
+                }
                 $.post({
                     url: '${pageContext.request.contextPath}/stuExam/handPaper',
                     data: {
@@ -338,10 +347,13 @@
                             var msg = {
                                 info: 'isHandPaper',
                                 point: res.isHandPaper,
+                                state: toState,
                                 data:${sessionScope.get("stuCheckInfo").getSID()}
                             };
                             webSocket.send(JSON.stringify(msg));
-                            $(location).attr("href", "${pageContext.request.contextPath}/stuExam/grade/${sessionScope.stuCheckInfo.EID}/${sessionScope.stuCheckInfo.SID}")
+                            if (state != 'violation') {
+                                $(location).attr("href", "${pageContext.request.contextPath}/stuExam/grade/${sessionScope.stuCheckInfo.EID}/${sessionScope.stuCheckInfo.SID}")
+                            }
                         }
                     }
                 });

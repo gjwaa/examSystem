@@ -81,6 +81,8 @@
                             alert("信息有误")
                         }else if (res.login === 'cheat') {
                             alert("你作弊了，请联系管理员")
+                        }else if (res.login === 'alreadyHandPaper') {
+                            alert("已经交卷了哦，进不去了")
                         }
 
                     }

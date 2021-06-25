@@ -76,17 +76,24 @@ public class StuExamController {
         Student student = studentService.checkLogin(map);
         int cheat = studentService.checkCheat(student.getEID(), student.getSID(), "作弊");
         JSONObject jsonObject = new JSONObject();
+        int alreadyHandPaper = studentService.checkCheat(student.getEID(), student.getSID(), "已交卷");
         if (cheat <= 0) {
-            if (student != null) {
-                session.setAttribute("stuCheckInfo", student);
-                System.err.println(student);
-                System.out.println("=======================================");
-                jsonObject.put("login", "true");
-                out.print(jsonObject);
+            if (alreadyHandPaper <= 0) {
+                if (student != null) {
+                    session.setAttribute("stuCheckInfo", student);
+                    System.err.println(student);
+                    System.out.println("=======================================");
+                    jsonObject.put("login", "true");
+                    out.print(jsonObject);
+                } else {
+                    jsonObject.put("login", "false");
+                    out.print(jsonObject);
+                }
             } else {
-                jsonObject.put("login", "false");
+                jsonObject.put("login", "alreadyHandPaper");
                 out.print(jsonObject);
             }
+
         } else {
             jsonObject.put("login", "cheat");
             out.print(jsonObject);
@@ -182,6 +189,7 @@ public class StuExamController {
     private String grade(HttpSession session, @PathVariable("eID") int eID, @PathVariable("sID") int sID) {
         Student student = examInfoService.queryExamResBySID(eID, sID);
         session.setAttribute("examGrade", student);
+        session.removeAttribute("stuCheckInfo");
         return "stu/grade";
     }
 
